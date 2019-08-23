@@ -28,9 +28,9 @@ const getFilmDescription = () => {
   return randomText.slice(0, minMaxRandomRange(1, 3)).join(`. `);
 };
 
-export const getFilm = (i) => ({
-  title: FILM_TITLES[i],
-  poster: FILM_POSTERS[i],
+export const getFilm = (index) => ({
+  title: FILM_TITLES[index],
+  poster: FILM_POSTERS[index],
   description: getFilmDescription(),
   genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
   year: minMaxRandomRange(1990, 2019),

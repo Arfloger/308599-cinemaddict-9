@@ -97,18 +97,18 @@ const getFilters = (cardsArr) => {
   };
 
   cardsArr.forEach((card) => {
-    filters.Watchlist = card.isToWatchlist === true ? filters.Watchlist += 1 : filters.Watchlist;
+    filters.Watchlist = card.isToWatchlist ? filters.Watchlist += 1 : filters.Watchlist;
 
-    filters.History = card.wasWatched === true ? filters.History += 1 : filters.History;
+    filters.History = card.wasWatched ? filters.History += 1 : filters.History;
 
-    filters.Favorites = card.isFavorite === true ? filters.Favorites += 1 : filters.Favorites;
+    filters.Favorites = card.isFavorite ? filters.Favorites += 1 : filters.Favorites;
   });
 
   return filters;
 };
 
 const renderFilters = (container, filtersArr) => {
-  let convertFilters = [];
+  const convertFilters = [];
 
   for (let [key, value] of Object.entries(filtersArr)) {
     convertFilters.push({
@@ -122,28 +122,29 @@ const renderFilters = (container, filtersArr) => {
 
 const getUserGrade = (container, cardsArr) => {
   let watchedCount = 0;
+  let watchedTitile;
   cardsArr.forEach((card) => {
-    watchedCount = card.wasWatched === true ? watchedCount += 1 : watchedCount;
+    watchedCount = card.wasWatched ? watchedCount += 1 : watchedCount;
   });
 
   switch (true) {
     case watchedCount === 0:
-      watchedCount = ``;
+      watchedTitile = ``;
       break;
     case watchedCount <= 10:
-      watchedCount = `novice`;
+      watchedTitile = `novice`;
       break;
     case watchedCount <= 20:
-      watchedCount = `fan`;
+      watchedTitile = `fan`;
       break;
     case watchedCount > 20:
-      watchedCount = `movie buff;`;
+      watchedTitile = `movie buff;`;
       break;
     default:
-      watchedCount = ``;
+      watchedTitile = ``;
   }
 
-  container.insertAdjacentHTML(`beforeend`, createProfile(watchedCount));
+  container.insertAdjacentHTML(`beforeend`, createProfile(watchedTitile));
 };
 
 const setFooterStatistics = (cardsArr) => {
@@ -162,21 +163,27 @@ const createPopup = () => {
   }
 };
 
-const init = () => {
-  renderElement(headerElement, createSearchTemplate);
-
-  renderElement(mainElement, createSortTemplate);
-  insertFilmsElement();
-  cards = createCards(FILM_CARDS);
+const createfilmListMarkup = () => {
   const filmListContainer = document.createElement(`div`);
   filmListContainer.classList.add(`films-list__container`);
   filmListElement.appendChild(filmListContainer);
+};
 
+const addListenerForMoreButton = () => {
+  showMoreButtonElement = document.querySelector(`.films-list__show-more`);
+  showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
+};
+
+const init = () => {
+  renderElement(headerElement, createSearchTemplate);
+  renderElement(mainElement, createSortTemplate);
+  insertFilmsElement();
+  cards = createCards(FILM_CARDS);
+  createfilmListMarkup();
   showCards(filmListElement, cards);
   leftCardsToRender = cards.length - tasksOnPage;
   renderElement(filmListElement, createShowMoreTemplate);
-  showMoreButtonElement = document.querySelector(`.films-list__show-more`);
-  showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
+  addListenerForMoreButton();
   const filters = getFilters(cards);
   renderFilters(mainElement, filters);
   getUserGrade(headerElement, cards);
