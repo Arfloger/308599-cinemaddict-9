@@ -1,8 +1,9 @@
 import {createElement} from "../utils.js";
 
-export default class ShowMore {
-  constructor() {
+export default class ExtraCard {
+  constructor(title) {
     this._element = null;
+    this._title = title;
   }
 
   getElement() {
@@ -15,7 +16,10 @@ export default class ShowMore {
 
   getTemplate() {
     return `
-    <button class="films-list__show-more">Show more</button>
+    <section class="films-list--extra">
+        <h2 class="films-list__title">${this._title}</h2>
+        <div class="films-list__container"></div>
+    </section>
     `.trim();
   }
 }
