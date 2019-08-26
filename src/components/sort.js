@@ -13,6 +13,10 @@ export default class Sort {
     return this._element;
   }
 
+  removeElement() {
+    this._element = null;
+  }
+
   getTemplate() {
     return `
     <ul class="sort">

@@ -1,4 +1,5 @@
-import {Position, render} from '../src/utils.js';
+import {render, unrender} from '../src/utils.js';
+import {Position} from "./const.js";
 
 import Search from "../src/components/search.js";
 import Profile from "../src/components/profile.js";
@@ -11,20 +12,19 @@ import Popup from "../src/components/popup.js";
 
 import {getFilm} from '../src/data.js';
 
-// const MAX_CARD_TO_SHOW = 5;
+const MAX_CARD_TO_SHOW = 5;
 const FILM_CARDS = 7;
-// const FILM_EXTRA_CARDS = 2;
+const FILM_EXTRA_CARDS = 2;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
-const footerElement = document.querySelector(`.footer`);
-
+const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
+const cardExtraMocks = new Array(FILM_EXTRA_CARDS).fill(``).map((it, index) => getFilm(index));
 let filmElement;
 let filmListElement;
 let filmListContainer;
-// let showMoreButtonElement;
-// let tasksOnPage = 0;
-// let leftCardsToRender = 0;
-// let popupElement;
+let showMoreButtonElement;
+let tasksOnPage = 0;
+let leftCardsToRender = 0;
 
 const createfilmMarkup = () => {
   filmElement = document.createElement(`section`);
@@ -38,32 +38,29 @@ const createfilmMarkup = () => {
   filmListElement.appendChild(filmListContainer);
 };
 
-// const onShowMoreButtonClick = () => {
-//   showCards(filmListElement, cards);
-// };
+const onShowMoreButtonClick = () => {
+  showCards(cardMocks);
+};
 
-// const showCards = (insertPlace, cardsArr) => {
+const showCards = (cardsArr) => {
+  cardsArr
+      .slice(tasksOnPage, tasksOnPage + MAX_CARD_TO_SHOW)
+      .map((card) => renderCard(card, filmListContainer))
+      .join(``);
 
-//   insertPlace.insertAdjacentHTML(
-//       `beforebegin`,
-//       cardsArr
-//       .map(createFilmCardTemplate)
-//       .slice(tasksOnPage, tasksOnPage + MAX_CARD_TO_SHOW)
-//       .join(``));
+  tasksOnPage += MAX_CARD_TO_SHOW;
+  leftCardsToRender = FILM_CARDS - tasksOnPage;
 
-//   tasksOnPage += MAX_CARD_TO_SHOW;
-//   leftCardsToRender = FILM_CARDS - tasksOnPage;
+  if (leftCardsToRender <= 0) {
+    showMoreButtonElement.removeEventListener(`click`, onShowMoreButtonClick);
+    unrender(showMoreButtonElement);
+  }
+};
 
-//   if (leftCardsToRender <= 0) {
-//     showMoreButtonElement.classList.add(`visually-hidden`);
-//     showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
-//   }
-// };
-
-// const addListenerForMoreButton = () => {
-//   showMoreButtonElement = document.querySelector(`.films-list__show-more`);
-//   showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
-// };
+const addListenerForMoreButton = () => {
+  showMoreButtonElement = document.querySelector(`.films-list__show-more`);
+  showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
+};
 
 const setFooterStatistics = (cardMocks) => {
   const footerStatisticElement = document.querySelector(`.footer__statistics p`);
@@ -96,48 +93,56 @@ const renderShowMore = () => {
 
 const renderExtraCard = (title) => {
   const extraCard = new ExtraCard(title);
+  const extraCardContainerElement = extraCard.getElement().querySelector(`.films-list__container`);
+
   render(filmElement, extraCard.getElement(), Position.BEFOREEND);
+  cardExtraMocks.map((card) => renderCard(card, extraCardContainerElement));
 };
 
-const renderCard = (cardMock) => {
+const renderCard = (cardMock, container) => {
   const card = new Card(cardMock);
-  render(filmListContainer, card.getElement(), Position.BEFOREEND);
-  const filmsImages = Array.from(document.querySelectorAll(`.film-card__poster`));
+  const popup = new Popup(cardMock);
 
-  for (let item of filmsImages) {
-    item.addEventListener(`click`, function () {
-      const popup = new Popup(cardMock);
-      render(footerElement, popup.getElement(), Position.AFTERBEGIN);
-    });
-  }
+  const onRenderPopupClick = () => {
+    render(mainElement, popup.getElement(), Position.BEFOREEND);
+  };
 
+  const onUnrenderPopupClick = () => {
+    unrender(popup.getElement());
+  };
+
+  card.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onRenderPopupClick);
+
+  popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onUnrenderPopupClick);
+
+  render(container, card.getElement(), Position.BEFOREEND);
 };
 
-const getUserGrade = (cardMocks) => {
+const getUserGrade = (cardArr) => {
   let watchedCount = 0;
-  let watchedTitile;
-  cardMocks.forEach((card) => {
+  let watchedTitle;
+  cardArr.forEach((card) => {
     watchedCount = card.wasWatched ? watchedCount += 1 : watchedCount;
   });
 
   switch (true) {
     case watchedCount === 0:
-      watchedTitile = ``;
+      watchedTitle = ``;
       break;
     case watchedCount <= 10:
-      watchedTitile = `novice`;
+      watchedTitle = `novice`;
       break;
     case watchedCount <= 20:
-      watchedTitile = `fan`;
+      watchedTitle = `fan`;
       break;
     case watchedCount > 20:
-      watchedTitile = `movie buff`;
+      watchedTitle = `movie buff`;
       break;
     default:
-      watchedTitile = ``;
+      watchedTitle = ``;
   }
 
-  return watchedTitile;
+  return watchedTitle;
 };
 
 const renderFilter = (cardMocks) => {
@@ -168,25 +173,19 @@ const renderFilter = (cardMocks) => {
   render(mainElement, filter.getElement(), Position.BEFOREEND);
 };
 
-const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
-// const cardExtraMocks = new Array(FILM_EXTRA_CARDS).fill(``).map((it, index) => getFilm(index));
-
 const init = () => {
   renderSearch();
   renderProfile();
   renderFilter(cardMocks);
   renderSort();
   createfilmMarkup();
-  cardMocks.map((cardMock) => renderCard(cardMock));
   renderShowMore();
   renderExtraCard(`Top rated`);
   renderExtraCard(`Most commented`);
   setFooterStatistics(cardMocks);
-
-  // showCards(filmListElement, cards);
-  // leftCardsToRender = cards.length - tasksOnPage;
-  // addListenerForMoreButton();
-  // createPopup();
+  showCards(cardMocks);
+  leftCardsToRender = cardMocks.length - tasksOnPage;
+  addListenerForMoreButton();
 };
 
 init();

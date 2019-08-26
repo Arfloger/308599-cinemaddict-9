@@ -14,6 +14,10 @@ export default class Menu {
     return this._element;
   }
 
+  removeElement() {
+    this._element = null;
+  }
+
   getTemplate() {
     return `
     <nav class="main-navigation">

@@ -14,6 +14,10 @@ export default class Profile {
     return this._element;
   }
 
+  removeElement() {
+    this._element = null;
+  }
+
   getTemplate() {
     return `
     <section class="header__profile profile">
