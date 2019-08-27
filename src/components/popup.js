@@ -1,5 +1,31 @@
-export const createPopupTemplate = ({title, poster, description, genre, year, rating, duration}) => {
-  return `
+import {createElement} from "../utils.js";
+
+export default class Popup {
+  constructor({title, rating, year, duration, genre, poster, description}) {
+    this._title = title;
+    this._rating = rating;
+    this._year = year;
+    this._duration = duration;
+    this._genre = genre;
+    this._poster = poster;
+    this._description = description;
+    this._element = null;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `
     <section class="film-details">
     <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
@@ -8,7 +34,7 @@ export const createPopupTemplate = ({title, poster, description, genre, year, ra
         </div>
         <div class="film-details__info-wrap">
             <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${poster}" alt="${title}">
+            <img class="film-details__poster-img" src="./images/posters/${this._poster}" alt="${this._title}">
 
             <p class="film-details__age">18+</p>
             </div>
@@ -16,12 +42,12 @@ export const createPopupTemplate = ({title, poster, description, genre, year, ra
             <div class="film-details__info">
             <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
-                <h3 class="film-details__title">${title}</h3>
+                <h3 class="film-details__title">${this._title}</h3>
                 <p class="film-details__title-original">Original: The Great Flamarion</p>
                 </div>
 
                 <div class="film-details__rating">
-                <p class="film-details__total-rating">${rating}</p>
+                <p class="film-details__total-rating">${this._rating}</p>
                 </div>
             </div>
 
@@ -40,11 +66,11 @@ export const createPopupTemplate = ({title, poster, description, genre, year, ra
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March ${year}</td>
+                <td class="film-details__cell">30 March ${this._year}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${duration}</td>
+                <td class="film-details__cell">${this._duration}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -53,12 +79,12 @@ export const createPopupTemplate = ({title, poster, description, genre, year, ra
                 <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                    <span class="film-details__genre">${genre}</span>
+                    <span class="film-details__genre">${this._genre}</span>
                 </td>
                 </tr>
             </tbody></table>
 
-            <p class="film-details__film-description">${description}</p>
+            <p class="film-details__film-description">${this._description}</p>
             </div>
         </div>
 
@@ -115,5 +141,6 @@ export const createPopupTemplate = ({title, poster, description, genre, year, ra
         </div>
     </form>
     </section>
-`;
-};
+    `.trim();
+  }
+}

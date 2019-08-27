@@ -1,9 +1,9 @@
 import {createElement} from "../utils.js";
 
-export default class Profile {
-  constructor(watchedCount) {
+export default class ExtraCard {
+  constructor(title) {
     this._element = null;
-    this._watchedCount = watchedCount;
+    this._title = title;
   }
 
   getElement() {
@@ -20,10 +20,10 @@ export default class Profile {
 
   getTemplate() {
     return `
-    <section class="header__profile profile">
-    <p class="profile__rating">${this._watchedCount}</p>
-    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-  </section>
+    <section class="films-list--extra">
+        <h2 class="films-list__title">${this._title}</h2>
+        <div class="films-list__container"></div>
+    </section>
     `.trim();
   }
 }

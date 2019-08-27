@@ -1,172 +1,60 @@
-/* eslint-disable no-unused-expressions */
-import {minMaxRandomRange, compareRandom, getRandomValue} from '../src/utils.js';
+import {render, unrender} from '../src/utils.js';
+import {Position} from "./const.js";
+
+import Search from "../src/components/search.js";
+import Profile from "../src/components/profile.js";
+import Menu from "../src/components/menu.js";
+import Sort from "../src/components/sort.js";
+import Card from "../src/components/film-card.js";
+import ShowMore from "../src/components/show-more.js";
+import ExtraCard from "../src/components/extra.js";
+import Popup from "../src/components/popup.js";
+
 import {getFilm} from '../src/data.js';
-
-import {createFilters} from '../src/components/menu.js';
-import {createProfile} from '../src/components/profile.js';
-
-import {createSearchTemplate} from '../src/components/search.js';
-import {createSortTemplate} from '../src/components/sort.js';
-import {createFilmCardTemplate} from '../src/components/film-card.js';
-import {createShowMoreTemplate} from '../src/components/show-more.js';
-import {createPopupTemplate} from '../src/components/popup.js';
 
 const MAX_CARD_TO_SHOW = 5;
 const FILM_CARDS = 7;
+const FILM_EXTRA_CARDS = 2;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
-const footerElement = document.querySelector(`.footer`);
-const filmElement = document.createElement(`section`);
-const filmListElement = document.createElement(`section`);
+const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
+const cardExtraMocks = new Array(FILM_EXTRA_CARDS).fill(``).map((it, index) => getFilm(index));
+let filmElement;
+let filmListElement;
+let filmListContainer;
 let showMoreButtonElement;
-let cards;
 let tasksOnPage = 0;
 let leftCardsToRender = 0;
-let popupElement;
 
-const renderElement = (insertPlace, callback, insertProperty = `beforeend`) => {
-  insertPlace.insertAdjacentHTML(insertProperty, callback());
-};
-
-const createCardsElement = (insertPlase, quantity) => {
-  const filmListContainer = document.createElement(`div`);
-  filmListContainer.classList.add(`films-list__container`);
-
-  for (let i = 0; i < quantity; i++) {
-    renderElement(filmListContainer, createFilmCardTemplate);
-  }
-
-  insertPlase.appendChild(filmListContainer);
-};
-
-const createExtraElement = (titleText, quantity = 2) => {
-  const filmExtraElement = document.createElement(`section`);
-  filmExtraElement.classList.add(`films-list--extra`);
-  filmElement.appendChild(filmExtraElement);
-
-  const filmExtraTitle = document.createElement(`h2`);
-  filmExtraTitle.classList.add(`films-list__title`);
-  filmExtraTitle.textContent = titleText;
-  filmExtraElement.appendChild(filmExtraTitle);
-
-  createCardsElement(filmExtraElement, quantity);
-};
-
-const insertFilmsElement = () => {
+const createfilmMarkup = () => {
+  filmElement = document.createElement(`section`);
+  filmListElement = document.createElement(`section`);
+  filmListContainer = document.createElement(`div`);
   filmElement.classList.add(`films`);
   filmListElement.classList.add(`films-list`);
   mainElement.appendChild(filmElement);
   filmElement.appendChild(filmListElement);
-};
-
-const createCards = (count) => {
-  const currentCards = [];
-  for (let i = 0; i < count; i++) {
-    currentCards.push(getFilm(i));
-  }
-  return currentCards;
+  filmListContainer.classList.add(`films-list__container`);
+  filmListElement.appendChild(filmListContainer);
 };
 
 const onShowMoreButtonClick = () => {
-  showCards(filmListElement, cards);
+  showCards(cardMocks);
 };
 
-const showCards = (insertPlace, cardsArr) => {
-
-  insertPlace.insertAdjacentHTML(
-      `beforebegin`,
-      cardsArr
-      .map(createFilmCardTemplate)
+const showCards = (cardsArr) => {
+  cardsArr
       .slice(tasksOnPage, tasksOnPage + MAX_CARD_TO_SHOW)
-      .join(``));
+      .map((card) => renderCard(card, filmListContainer))
+      .join(``);
 
   tasksOnPage += MAX_CARD_TO_SHOW;
   leftCardsToRender = FILM_CARDS - tasksOnPage;
 
   if (leftCardsToRender <= 0) {
-    showMoreButtonElement.classList.add(`visually-hidden`);
-    showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
+    showMoreButtonElement.removeEventListener(`click`, onShowMoreButtonClick);
+    unrender(showMoreButtonElement);
   }
-};
-
-const getFilters = (cardsArr) => {
-  const filters = {
-    Watchlist: 0,
-    History: 0,
-    Favorites: 0
-  };
-
-  cardsArr.forEach((card) => {
-    filters.Watchlist = card.isToWatchlist ? filters.Watchlist += 1 : filters.Watchlist;
-
-    filters.History = card.wasWatched ? filters.History += 1 : filters.History;
-
-    filters.Favorites = card.isFavorite ? filters.Favorites += 1 : filters.Favorites;
-  });
-
-  return filters;
-};
-
-const renderFilters = (container, filtersArr) => {
-  const convertFilters = [];
-
-  for (let [key, value] of Object.entries(filtersArr)) {
-    convertFilters.push({
-      title: key,
-      count: value
-    });
-  }
-
-  container.insertAdjacentHTML(`beforebegin`, createFilters(convertFilters));
-};
-
-const getUserGrade = (container, cardsArr) => {
-  let watchedCount = 0;
-  let watchedTitile;
-  cardsArr.forEach((card) => {
-    watchedCount = card.wasWatched ? watchedCount += 1 : watchedCount;
-  });
-
-  switch (true) {
-    case watchedCount === 0:
-      watchedTitile = ``;
-      break;
-    case watchedCount <= 10:
-      watchedTitile = `novice`;
-      break;
-    case watchedCount <= 20:
-      watchedTitile = `fan`;
-      break;
-    case watchedCount > 20:
-      watchedTitile = `movie buff;`;
-      break;
-    default:
-      watchedTitile = ``;
-  }
-
-  container.insertAdjacentHTML(`beforeend`, createProfile(watchedTitile));
-};
-
-const setFooterStatistics = (cardsArr) => {
-  const footerStatisticElement = document.querySelector(`.footer__statistics p`);
-  footerStatisticElement.textContent = `${cardsArr.length} movies inside`;
-};
-
-const createPopup = () => {
-  const filmsImages = Array.from(document.querySelectorAll(`.film-card__poster`));
-  for (let item of filmsImages) {
-    item.addEventListener(`click`, function () {
-      const targetElement = filmsImages.indexOf(item);
-
-      footerElement.insertAdjacentHTML(`afterend`, createPopupTemplate(cards[targetElement]));
-    });
-  }
-};
-
-const createfilmListMarkup = () => {
-  const filmListContainer = document.createElement(`div`);
-  filmListContainer.classList.add(`films-list__container`);
-  filmListElement.appendChild(filmListContainer);
 };
 
 const addListenerForMoreButton = () => {
@@ -174,23 +62,130 @@ const addListenerForMoreButton = () => {
   showMoreButtonElement.addEventListener(`click`, onShowMoreButtonClick);
 };
 
+const setFooterStatistics = (cardMocks) => {
+  const footerStatisticElement = document.querySelector(`.footer__statistics p`);
+  footerStatisticElement.textContent = `${cardMocks.length} movies inside`;
+};
+
+const renderSearch = () => {
+  const search = new Search();
+
+  render(headerElement, search.getElement(), Position.BEFOREEND);
+};
+
+const renderProfile = () => {
+  const userTitle = getUserGrade(cardMocks);
+  const profile = new Profile(userTitle);
+
+  render(headerElement, profile.getElement(), Position.BEFOREEND);
+};
+
+const renderSort = () => {
+  const sort = new Sort();
+  render(mainElement, sort.getElement(), Position.BEFOREEND);
+};
+
+const renderShowMore = () => {
+  const showMore = new ShowMore();
+
+  render(filmListElement, showMore.getElement(), Position.BEFOREEND);
+};
+
+const renderExtraCard = (title) => {
+  const extraCard = new ExtraCard(title);
+  const extraCardContainerElement = extraCard.getElement().querySelector(`.films-list__container`);
+
+  render(filmElement, extraCard.getElement(), Position.BEFOREEND);
+  cardExtraMocks.map((card) => renderCard(card, extraCardContainerElement));
+};
+
+const renderCard = (cardMock, container) => {
+  const card = new Card(cardMock);
+  const popup = new Popup(cardMock);
+
+  const onRenderPopupClick = () => {
+    render(mainElement, popup.getElement(), Position.BEFOREEND);
+  };
+
+  const onUnrenderPopupClick = () => {
+    unrender(popup.getElement());
+  };
+
+  card.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onRenderPopupClick);
+
+  popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onUnrenderPopupClick);
+
+  render(container, card.getElement(), Position.BEFOREEND);
+};
+
+const getUserGrade = (cardArr) => {
+  let watchedCount = 0;
+  let watchedTitle;
+  cardArr.forEach((card) => {
+    watchedCount = card.wasWatched ? watchedCount += 1 : watchedCount;
+  });
+
+  switch (true) {
+    case watchedCount === 0:
+      watchedTitle = ``;
+      break;
+    case watchedCount <= 10:
+      watchedTitle = `novice`;
+      break;
+    case watchedCount <= 20:
+      watchedTitle = `fan`;
+      break;
+    case watchedCount > 20:
+      watchedTitle = `movie buff`;
+      break;
+    default:
+      watchedTitle = ``;
+  }
+
+  return watchedTitle;
+};
+
+const renderFilter = (cardMocks) => {
+  const filtersList = {
+    Watchlist: 0,
+    History: 0,
+    Favorites: 0
+  };
+
+  cardMocks.forEach((card) => {
+    filtersList.Watchlist = card.isToWatchlist ? filtersList.Watchlist += 1 : filtersList.Watchlist;
+
+    filtersList.History = card.wasWatched ? filtersList.History += 1 : filtersList.History;
+
+    filtersList.Favorites = card.isFavorite ? filtersList.Favorites += 1 : filtersList.Favorites;
+  });
+
+  const filters = [];
+
+  for (let [key, value] of Object.entries(filtersList)) {
+    filters.push({
+      title: key,
+      count: value
+    });
+  }
+
+  const filter = new Menu(filters);
+  render(mainElement, filter.getElement(), Position.BEFOREEND);
+};
+
 const init = () => {
-  renderElement(headerElement, createSearchTemplate);
-  renderElement(mainElement, createSortTemplate);
-  insertFilmsElement();
-  cards = createCards(FILM_CARDS);
-  createfilmListMarkup();
-  showCards(filmListElement, cards);
-  leftCardsToRender = cards.length - tasksOnPage;
-  renderElement(filmListElement, createShowMoreTemplate);
+  renderSearch();
+  renderProfile();
+  renderFilter(cardMocks);
+  renderSort();
+  createfilmMarkup();
+  renderShowMore();
+  renderExtraCard(`Top rated`);
+  renderExtraCard(`Most commented`);
+  setFooterStatistics(cardMocks);
+  showCards(cardMocks);
+  leftCardsToRender = cardMocks.length - tasksOnPage;
   addListenerForMoreButton();
-  const filters = getFilters(cards);
-  renderFilters(mainElement, filters);
-  getUserGrade(headerElement, cards);
-  setFooterStatistics(cards);
-  // createExtraElement(`Top rated`);
-  // createExtraElement(`Most commented`);
-  createPopup();
 };
 
 init();
