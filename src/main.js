@@ -1,5 +1,5 @@
 import {render, unrender} from '../src/utils.js';
-import {Position} from "./const.js";
+import {Position, Keycode} from "./const.js";
 
 import Search from "../src/components/search.js";
 import Profile from "../src/components/profile.js";
@@ -129,7 +129,7 @@ const renderCard = (cardMock, container) => {
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === Keycode.ESC_KEYCODE) {
       popup.getElement();
       unrender(popup.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);
