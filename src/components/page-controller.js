@@ -29,10 +29,10 @@ export default class PageController {
     render(this._filmsList.getElement(), this._filmsListContainer.getElement(), Position.BEFOREEND);
 
     this._leftCardsToRender = this._cards.length - this._tasksOnPage;
+    this._renderShowMore();
     this._showCards(this._cards);
     this._renderExtraCard(`Top rated`);
     this._renderExtraCard(`Most commented`);
-    this._renderShowMore();
   }
 
   _renderCard(card, renderContainer) {

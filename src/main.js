@@ -9,7 +9,7 @@ import Sort from "../src/components/sort.js";
 
 import {getFilm} from '../src/data.js';
 
-const FILM_CARDS = 7;
+const FILM_CARDS = 3;
 const FILM_EXTRA_CARDS = 2;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
