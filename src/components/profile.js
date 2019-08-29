@@ -1,21 +1,9 @@
-import {createElement} from "../utils.js";
+import {AbstractComponent} from "../components/abstract-component.js";
 
-export default class Profile {
+export default class Profile extends AbstractComponent {
   constructor(watchedCount) {
-    this._element = null;
+    super();
     this._watchedCount = watchedCount;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

@@ -1,13 +1,13 @@
 import {AbstractComponent} from "../components/abstract-component.js";
 
-export default class ShowMore extends AbstractComponent {
+export default class FilmsListContainer extends AbstractComponent {
   constructor() {
     super();
   }
 
   getTemplate() {
     return `
-    <button class="films-list__show-more">Show more</button>
+    <div class="films-list__container"></div>
     `.trim();
   }
 }

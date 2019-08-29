@@ -1,21 +1,9 @@
-import {createElement} from "../utils.js";
+import {AbstractComponent} from "../components/abstract-component.js";
 
-export default class ExtraCard {
+export default class ExtraCard extends AbstractComponent {
   constructor(title) {
-    this._element = null;
+    super();
     this._title = title;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {

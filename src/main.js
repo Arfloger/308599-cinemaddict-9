@@ -1,6 +1,7 @@
 import {render, unrender} from '../src/utils.js';
 import {Position} from "./const.js";
 
+import PageController from "../src/components/page-controller.js";
 import Search from "../src/components/search.js";
 import Profile from "../src/components/profile.js";
 import Menu from "../src/components/menu.js";
@@ -12,31 +13,20 @@ import Popup from "../src/components/popup.js";
 
 import {getFilm} from '../src/data.js';
 
-const MAX_CARD_TO_SHOW = 5;
+// const MAX_CARD_TO_SHOW = 5;
 const FILM_CARDS = 7;
 const FILM_EXTRA_CARDS = 2;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
 const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
 const cardExtraMocks = new Array(FILM_EXTRA_CARDS).fill(``).map((it, index) => getFilm(index));
-let filmElement;
-let filmListElement;
-let filmListContainer;
+const pageController = new PageController(mainElement, cardMocks);
+// let filmElement;
+// let filmListElement;
+// let filmListContainer;
 let showMoreButtonElement;
 let tasksOnPage = 0;
 let leftCardsToRender = 0;
-
-const createfilmMarkup = () => {
-  filmElement = document.createElement(`section`);
-  filmListElement = document.createElement(`section`);
-  filmListContainer = document.createElement(`div`);
-  filmElement.classList.add(`films`);
-  filmListElement.classList.add(`films-list`);
-  mainElement.appendChild(filmElement);
-  filmElement.appendChild(filmListElement);
-  filmListContainer.classList.add(`films-list__container`);
-  filmListElement.appendChild(filmListContainer);
-};
 
 const onShowMoreButtonClick = () => {
   showCards(cardMocks);
@@ -178,14 +168,14 @@ const init = () => {
   renderProfile();
   renderFilter(cardMocks);
   renderSort();
-  createfilmMarkup();
-  renderShowMore();
-  renderExtraCard(`Top rated`);
-  renderExtraCard(`Most commented`);
-  setFooterStatistics(cardMocks);
-  showCards(cardMocks);
-  leftCardsToRender = cardMocks.length - tasksOnPage;
-  addListenerForMoreButton();
+  // renderShowMore();
+  // renderExtraCard(`Top rated`);
+  // renderExtraCard(`Most commented`);
+  // setFooterStatistics(cardMocks);
+  // showCards(cardMocks);
+  // leftCardsToRender = cardMocks.length - tasksOnPage;
+  // addListenerForMoreButton();
+  pageController.init();
 };
 
 init();
