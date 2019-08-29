@@ -1,5 +1,5 @@
 import {render, unrender} from '../src/utils.js';
-import {Position} from "./const.js";
+import {Position, Keycode} from "./const.js";
 
 import Search from "../src/components/search.js";
 import Profile from "../src/components/profile.js";
@@ -9,6 +9,7 @@ import Card from "../src/components/film-card.js";
 import ShowMore from "../src/components/show-more.js";
 import ExtraCard from "../src/components/extra.js";
 import Popup from "../src/components/popup.js";
+import Message from "../src/components/message.js";
 
 import {getFilm} from '../src/data.js';
 
@@ -43,6 +44,17 @@ const onShowMoreButtonClick = () => {
 };
 
 const showCards = (cardsArr) => {
+  if (cardsArr.length === 0) {
+    renderMessage();
+    unrender(showMoreButtonElement);
+    return;
+  } else if (cardsArr.length <= MAX_CARD_TO_SHOW) {
+    cardsArr.slice(0).map((card) => renderCard(card, filmListContainer))
+    .join(``);
+    unrender(showMoreButtonElement);
+    return;
+  }
+
   cardsArr
       .slice(tasksOnPage, tasksOnPage + MAX_CARD_TO_SHOW)
       .map((card) => renderCard(card, filmListContainer))
@@ -91,6 +103,11 @@ const renderShowMore = () => {
   render(filmListElement, showMore.getElement(), Position.BEFOREEND);
 };
 
+const renderMessage = () => {
+  const message = new Message();
+  render(filmListElement, message.getElement(), Position.AFTERBEGIN);
+};
+
 const renderExtraCard = (title) => {
   const extraCard = new ExtraCard(title);
   const extraCardContainerElement = extraCard.getElement().querySelector(`.films-list__container`);
@@ -111,9 +128,29 @@ const renderCard = (cardMock, container) => {
     unrender(popup.getElement());
   };
 
-  card.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, onRenderPopupClick);
+  const onEscKeyDown = (evt) => {
+    if (evt.keyCode === Keycode.ESC) {
+      popup.getElement();
+      unrender(popup.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  card.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+    onRenderPopupClick();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
   popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onUnrenderPopupClick);
+
+  popup.getElement().querySelector(`.film-details__comment-input`).addEventListener(`focus`, () => {
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  popup.getElement().querySelector(`.film-details__comment-input`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
 
   render(container, card.getElement(), Position.BEFOREEND);
 };
@@ -180,12 +217,12 @@ const init = () => {
   renderSort();
   createfilmMarkup();
   renderShowMore();
+  addListenerForMoreButton();
   renderExtraCard(`Top rated`);
   renderExtraCard(`Most commented`);
   setFooterStatistics(cardMocks);
-  showCards(cardMocks);
   leftCardsToRender = cardMocks.length - tasksOnPage;
-  addListenerForMoreButton();
+  showCards(cardMocks);
 };
 
 init();
