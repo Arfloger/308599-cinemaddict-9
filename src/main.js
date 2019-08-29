@@ -129,7 +129,7 @@ const renderCard = (cardMock, container) => {
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.keyCode === Keycode.ESC_KEY) {
+    if (evt.keyCode === Keycode.ESC) {
       popup.getElement();
       unrender(popup.getElement());
       document.removeEventListener(`keydown`, onEscKeyDown);

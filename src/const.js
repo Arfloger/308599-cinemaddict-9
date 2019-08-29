@@ -4,5 +4,5 @@ export const Position = {
 };
 
 export const Keycode = {
-  ESC_KEY: 27
+  ESC: 27
 };
