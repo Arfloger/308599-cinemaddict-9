@@ -1,5 +1,6 @@
 import {Position, Keycode} from "../const.js";
 import {render, unrender} from "../utils.js";
+import Sort from "./sort.js";
 import Films from "./films.js";
 import FilmsList from "./films-list.js";
 import FilmsListContainer from "./films-list-container.js";
@@ -17,6 +18,7 @@ export default class PageController {
     this._container = container;
     this._cards = cards;
     this._extraCards = extraCards;
+    this._sort = new Sort();
     this._films = new Films();
     this._filmsList = new FilmsList();
     this._filmsListContainer = new FilmsListContainer();
@@ -27,12 +29,14 @@ export default class PageController {
     render(this._container, this._films.getElement(), Position.BEFOREEND);
     render(this._films.getElement(), this._filmsList.getElement(), Position.BEFOREEND);
     render(this._filmsList.getElement(), this._filmsListContainer.getElement(), Position.BEFOREEND);
-
+    render(this._films.getElement(), this._sort.getElement(), Position.AFTERBEGIN);
     this._leftCardsToRender = this._cards.length - this._tasksOnPage;
     this._renderShowMore();
     this._showCards(this._cards);
     this._renderExtraCard(`Top rated`);
     this._renderExtraCard(`Most commented`);
+    this._sort.getElement()
+    .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
   }
 
   _renderCard(card, renderContainer) {
@@ -102,6 +106,34 @@ export default class PageController {
 
     if (this._leftCardsToRender <= 0) {
       unrender(this._showMore.getElement());
+    }
+  }
+
+  _onSortLinkClick(evt) {
+
+    evt.preventDefault();
+
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
+    this._filmsListContainer.getElement().innerHTML = ``;
+    this._renderShowMore();
+    this._tasksOnPage = 0;
+    this._leftCardsToRender = 0;
+
+    switch (evt.target.dataset.sortType) {
+      case `date-down`:
+        const sortedByDateDownCards = this._cards.slice().sort((a, b) => b.year - a.year);
+        this._showCards(sortedByDateDownCards);
+        break;
+      case `rating-down`:
+        const sortedByRatingDownCards = this._cards.slice().sort((a, b) => b.rating - a.rating);
+        this._showCards(sortedByRatingDownCards);
+        break;
+      case `default`:
+        this._showCards(this._cards);
+        break;
     }
   }
 

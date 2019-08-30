@@ -5,7 +5,6 @@ import PageController from "../src/components/page-controller.js";
 import Search from "../src/components/search.js";
 import Profile from "../src/components/profile.js";
 import Menu from "../src/components/menu.js";
-import Sort from "../src/components/sort.js";
 
 import {getFilm} from '../src/data.js';
 
@@ -28,11 +27,6 @@ const renderProfile = () => {
   const profile = new Profile(userTitle);
 
   render(headerElement, profile.getElement(), Position.BEFOREEND);
-};
-
-const renderSort = () => {
-  const sort = new Sort();
-  render(mainElement, sort.getElement(), Position.BEFOREEND);
 };
 
 const renderFilter = (cards) => {
@@ -99,9 +93,8 @@ const init = () => {
   renderSearch();
   renderProfile();
   renderFilter(cardMocks);
-  renderSort();
-  setFooterStatistics(cardMocks);
   pageController.init();
+  setFooterStatistics(cardMocks);
 };
 
 init();
