@@ -117,6 +117,10 @@ export default class PageController {
       return;
     }
 
+    this._sort.getElement().querySelectorAll(`.sort__button`)
+    .forEach((item) => item.classList.remove(`sort__button--active`));
+    evt.target.classList.add(`sort__button--active`);
+
     this._filmsListContainer.getElement().innerHTML = ``;
     this._renderShowMore();
     this._tasksOnPage = 0;
