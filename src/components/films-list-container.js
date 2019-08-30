@@ -1,15 +1,13 @@
 import {AbstractComponent} from "../components/abstract-component.js";
 
-export default class Message extends AbstractComponent {
+export default class FilmsListContainer extends AbstractComponent {
   constructor() {
     super();
   }
 
   getTemplate() {
     return `
-    <div class="no-result">
-        There is no movies for your request.
-      </div>
+    <div class="films-list__container"></div>
     `.trim();
   }
 }
