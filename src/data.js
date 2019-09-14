@@ -22,7 +22,11 @@ const FILM_POSTERS = [
 
 const FILM_GENRES = [`Musical`, `Sitcom`, `Comedy`, `Thriller`, `Detective`];
 
-const getFilmDescription = () => {
+const EMOTIONS = [`smile`, `sleeping`, `puke`, `angry`];
+
+const COMMENT_AUTHORS = [`Tom`, `Oxxximiron`, `Darth Vader`];
+
+const getRandomText = () => {
   const randomText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`.split(`. `).sort(compareRandom);
 
   return randomText.slice(0, minMaxRandomRange(1, 3)).join(`. `);
@@ -31,14 +35,30 @@ const getFilmDescription = () => {
 export const getFilm = (index) => ({
   title: FILM_TITLES[index],
   poster: FILM_POSTERS[index],
-  description: getFilmDescription(),
+  description: getRandomText(),
   genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
   year: minMaxRandomRange(1990, 2019),
   rating: `${minMaxRandomRange(5, 9)}.${minMaxRandomRange(0, 9)}`,
   duration: `${minMaxRandomRange(1, 3)}h${minMaxRandomRange(10, 59)}m`,
   isToWatchlist: getRandomBoolean(),
   wasWatched: getRandomBoolean(),
-  isFavorite: getRandomBoolean()
+  isFavorite: getRandomBoolean(),
 });
 
+const getComment = () => ({
+  textCom: getRandomText(),
+  emoji: EMOTIONS[getRandomValue(EMOTIONS.length - 1)],
+  author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - 1)],
+  date: Date.now(),
+});
 
+export const getComments = () => {
+  const comments = [];
+  const randomQuantity = minMaxRandomRange(1, 4);
+
+  for (let i = 0; i < randomQuantity; i++) {
+    comments.push(getComment());
+  }
+
+  return comments;
+};
