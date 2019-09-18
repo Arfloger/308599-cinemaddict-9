@@ -1,104 +1,101 @@
-import {Keycode, Position} from "../const.js";
-import {unrender, render} from "../utils.js";
-import Card from "./film-card.js";
-import Popup from "./popup.js";
+import {Keycode, Position} from "../const";
+import {unrender, render} from "../utils";
+import Card from "../components/film-card";
+import Popup from "../components/popup";
 
 export default class MovieController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, commentsData, onDataChange, onChangeView) {
     this._container = container;
     this._data = data;
+    this._commentsData = commentsData;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._card = new Card(data);
-    this._popup = new Popup(data);
+    this._popup = new Popup(data, commentsData);
     this.init();
   }
 
   init() {
+    render(this._container, this._card.getElement(), Position.BEFOREEND);
 
     const onRenderPopupClick = () => {
-      render(this._container.getElement(), this._popup.getElement(), Position.BEFOREEND);
+      render(document.body, this._popup.getElement(), Position.BEFOREEND);
     };
 
     const onUnrenderPopupClick = () => {
-      unrender(this._popup.getElement());
       const entry = this.setNewDataPopup();
       this._onDataChange(entry, this._data);
+      unrender(this._popup.getElement());
+      this._popup.removeElement();
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.keyCode === Keycode.ESC) {
-        this._popup.getElement();
-        unrender(this._popup.getElement());
         const entry = this.setNewDataPopup();
         this._onDataChange(entry, this._data);
+        unrender(this._popup.getElement());
+        this._popup.removeElement();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
-    this._card.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+    this._card.getElement()
+    .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, () => {
       onRenderPopupClick();
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
-    this._popup.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, onUnrenderPopupClick);
-
-    this._popup.getElement().querySelector(`.film-details__comment-input`).addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    this._popup.getElement().querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    render(this._container.getElement(), this._card.getElement(), Position.BEFOREEND);
-
-
-    this._card
-      .getElement()
+    this._card.getElement()
       .querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._card
-      .getElement()
-      .querySelector(`.film-card__controls-item--add-to-watchlist`).classList.toggle(`film-card__controls-item--active`);
+        this._card.getElement()
+        .querySelector(`.film-card__controls-item--add-to-watchlist`).classList.toggle(`film-card__controls-item--active`);
 
         const entry = this.setNewDataCard();
         this._onDataChange(entry, this._data);
-
       });
 
-    this._card
-      .getElement()
+    this._card.getElement()
       .querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._card
-      .getElement()
-      .querySelector(`.film-card__controls-item--mark-as-watched`).classList.toggle(`film-card__controls-item--active`);
+        this._card.getElement()
+        .querySelector(`.film-card__controls-item--mark-as-watched`).classList.toggle(`film-card__controls-item--active`);
 
         const entry = this.setNewDataCard();
         this._onDataChange(entry, this._data);
-
       });
 
-    this._card
-      .getElement()
+    this._card.getElement()
       .querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._card
-      .getElement()
-      .querySelector(`.film-card__controls-item--favorite`).classList.toggle(`film-card__controls-item--active`);
+        this._card.getElement()
+        .querySelector(`.film-card__controls-item--favorite`).classList.toggle(`film-card__controls-item--active`);
 
         const entry = this.setNewDataCard();
         this._onDataChange(entry, this._data);
-
       });
 
-    this._popup
-      .getElement()
+    this._popup.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, onUnrenderPopupClick);
+
+    this._popup.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._popup.getElement()
+      .querySelector(`.film-details__comment-input`)
+        .addEventListener(`blur`, () => {
+          document.addEventListener(`keydown`, onEscKeyDown);
+        });
+
+    this._popup.getElement()
       .querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
@@ -112,7 +109,6 @@ export default class MovieController {
         }
 
         document.addEventListener(`keydown`, onEscKeyDown);
-
       });
 
     this._popup
@@ -153,16 +149,15 @@ export default class MovieController {
 
       });
 
-    this._popup.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, () => {
-      this._popup.getElement().querySelector(`.film-details__comment-delete`).closest(`.film-details__comment`).remove();
-    });
+    // this._popup.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, () => {
+    //   this._popup.getElement().querySelector(`.film-details__comment-delete`).closest(`.film-details__comment`).remove();
+    // });
 
     this._popup.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, (evt) => {
       if (evt.target.tagName === `IMG`) {
         this._popup.getElement().querySelector(`.film-details__add-emoji-label img`).src = evt.target.src;
       }
     });
-
 
   }
 
@@ -172,12 +167,12 @@ export default class MovieController {
       poster: this._card._poster,
       description: this._card._description,
       genre: this._card._genre,
-      year: this._card._year,
       rating: this._card._rating,
       duration: this._card._duration,
       isToWatchlist: this._card.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).classList.contains(`film-card__controls-item--active`) ? true : false,
       wasWatched: this._card.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).classList.contains(`film-card__controls-item--active`) ? true : false,
       isFavorite: this._card.getElement().querySelector(`.film-card__controls-item--favorite`).classList.contains(`film-card__controls-item--active`) ? true : false,
+      releaseDate: this._card._releaseDate,
     };
 
     return entry;
@@ -189,12 +184,12 @@ export default class MovieController {
       poster: this._card._poster,
       description: this._card._description,
       genre: this._card._genre,
-      year: this._card._year,
       rating: this._card._rating,
       duration: this._card._duration,
       isToWatchlist: this._popup.getElement().querySelector(`#watchlist`).hasAttribute(`checked`) ? true : false,
       wasWatched: this._popup.getElement().querySelector(`#watched`).hasAttribute(`checked`) ? true : false,
       isFavorite: this._popup.getElement().querySelector(`#favorite`).hasAttribute(`checked`) ? true : false,
+      releaseDate: this._card._releaseDate,
     };
 
     return entry;
@@ -206,5 +201,4 @@ export default class MovieController {
       this._popup.removeElement();
     }
   }
-
 }

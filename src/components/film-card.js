@@ -1,11 +1,12 @@
-import {AbstractComponent} from "../components/abstract-component.js";
+import {AbstractComponent} from "../components/abstract-component";
+import moment from 'moment';
+import 'moment-duration-format';
 
 export default class Card extends AbstractComponent {
-  constructor({title, rating, year, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite}) {
+  constructor({title, rating, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite, releaseDate}) {
     super();
     this._title = title;
     this._rating = rating;
-    this._year = year;
     this._duration = duration;
     this._genre = genre;
     this._poster = poster;
@@ -13,6 +14,7 @@ export default class Card extends AbstractComponent {
     this._isToWatchlist = isToWatchlist;
     this._wasWatched = wasWatched;
     this._isFavorite = isFavorite;
+    this._releaseDate = releaseDate;
   }
 
   getTemplate() {
@@ -21,8 +23,8 @@ export default class Card extends AbstractComponent {
         <h3 class="film-card__title">${this._title}</h3>
         <p class="film-card__rating">${this._rating}</p>
         <p class="film-card__info">
-            <span class="film-card__year">${this._year}</span>
-            <span class="film-card__duration">${this._duration}</span>
+            <span class="film-card__year">${moment(this._releaseDate).format(`DD MMM YYYY`)}</span>
+            <span class="film-card__duration">${moment.duration(this._duration, `minutes`).format(`h[h] m[m]`)}</span>
             <span class="film-card__genre">${this._genre}</span>
         </p>
         <img src="./images/posters/${this._poster}" alt="${this._title}" class="film-card__poster">

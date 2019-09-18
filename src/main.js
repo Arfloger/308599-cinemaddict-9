@@ -1,20 +1,18 @@
-import {render} from '../src/utils.js';
-import {Position} from "./const.js";
+import {render} from '../src/utils';
+import {Position} from "./const";
 
-import PageController from "../src/components/page-controller.js";
-import Search from "../src/components/search.js";
-import Profile from "../src/components/profile.js";
-import Menu from "../src/components/menu.js";
+import PageController from "../src/controllers/page-controller";
+import Search from "../src/components/search";
+import Profile from "../src/components/profile";
+import Menu from "../src/components/menu";
 
-import {getFilm} from '../src/data.js';
+import {getFilm, getComments} from '../src/data';
 
 const FILM_CARDS = 7;
-const FILM_EXTRA_CARDS = 2;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
 const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
-const cardExtraMocks = new Array(FILM_EXTRA_CARDS).fill(``).map((it, index) => getFilm(index));
-const pageController = new PageController(mainElement, cardMocks, cardExtraMocks);
+const pageController = new PageController(mainElement, cardMocks, getComments());
 
 const renderSearch = () => {
   const search = new Search();

@@ -1,4 +1,4 @@
-import {AbstractComponent} from "../components/abstract-component.js";
+import {AbstractComponent} from "../components/abstract-component";
 
 export default class Search extends AbstractComponent {
   constructor() {
