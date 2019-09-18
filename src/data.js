@@ -1,4 +1,4 @@
-import {minMaxRandomRange, getRandomValue, compareRandom, getRandomBoolean} from '../src/utils.js';
+import {minMaxRandomRange, getRandomValue, compareRandom, getRandomBoolean} from '../src/utils';
 
 const FILM_TITLES = [
   `One film`,
@@ -33,16 +33,17 @@ const getRandomText = () => {
 };
 
 export const getFilm = (index) => ({
+  filmId: index,
   title: FILM_TITLES[index],
   poster: FILM_POSTERS[index],
   description: getRandomText(),
   genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
-  year: minMaxRandomRange(1990, 2019),
   rating: `${minMaxRandomRange(5, 9)}.${minMaxRandomRange(0, 9)}`,
-  duration: `${minMaxRandomRange(1, 3)}h${minMaxRandomRange(10, 59)}m`,
+  duration: 77,
   isToWatchlist: getRandomBoolean(),
   wasWatched: getRandomBoolean(),
   isFavorite: getRandomBoolean(),
+  releaseDate: getRandomValue(1475924187819),
 });
 
 const getComment = () => ({
@@ -62,3 +63,10 @@ export const getComments = () => {
 
   return comments;
 };
+
+// export const getCommentsData = () => {
+//   return {
+//     comments: getComments()
+//   };
+// };
+

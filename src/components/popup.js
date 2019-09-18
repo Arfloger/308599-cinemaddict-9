@@ -1,12 +1,12 @@
-import {AbstractComponent} from "../components/abstract-component.js";
-import {getComments} from "../data.js";
+import {AbstractComponent} from "../components/abstract-component";
+import moment from 'moment';
+import 'moment-duration-format';
 
 export default class Popup extends AbstractComponent {
-  constructor({title, rating, year, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite}) {
+  constructor({title, rating, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite, releaseDate}, commentsData) {
     super();
     this._title = title;
     this._rating = rating;
-    this._year = year;
     this._duration = duration;
     this._genre = genre;
     this._poster = poster;
@@ -14,26 +14,8 @@ export default class Popup extends AbstractComponent {
     this._isToWatchlist = isToWatchlist;
     this._wasWatched = wasWatched;
     this._isFavorite = isFavorite;
-    this._comments = getComments();
-  }
-
-  getCommentTemplate(comment) {
-    return `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">
-          <img src="./images/emoji/${comment.emoji}.png" 
-          width="55" 
-          height="55" 
-          alt="${comment.emoji} emoji">
-        </span>
-        <div>
-          <p class="film-details__comment-text">${comment.textCom}</p>
-          <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${new Date(comment.date).toLocaleString()}</span>
-            <button class="film-details__comment-delete">Delete</button>
-          </p>
-        </div>
-        </li>`.trim();
+    this._releaseDate = releaseDate;
+    this._commentsData = commentsData;
   }
 
   getRatingTemplate() {
@@ -132,11 +114,11 @@ export default class Popup extends AbstractComponent {
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March ${this._year}</td>
+                <td class="film-details__cell">30 March ${moment(this._releaseDate).format(`DD MMM YYYY`)}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${this._duration}</td>
+                <td class="film-details__cell">${moment.duration(this._duration, `minutes`).format(`h[h] m[m]`)}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -170,11 +152,29 @@ export default class Popup extends AbstractComponent {
         
         <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsData.length}</span></h3>
 
             <ul class="film-details__comments-list">
+              ${this._commentsData.map((it) => {
 
-            ${this.getCommentTemplate(this._comments[0])}
+    return `<li class="film-details__comment">
+                <span class="film-details__comment-emoji">
+                  <img src="./images/emoji/${it.emoji}.png" 
+                  width="55" 
+                  height="55" 
+                  alt="${it.emoji} emoji">
+                </span>
+                <div>
+                  <p class="film-details__comment-text">${it.textCom}</p>
+                  <p class="film-details__comment-info">
+                    <span class="film-details__comment-author">${it.author}</span>
+                    <span class="film-details__comment-day">${moment(it.date).format(`YY/MM/DD HH: MM`)}</span>
+                    <button class="film-details__comment-delete">Delete</button>
+                  </p>
+                </div>
+    </li>`.trim();
+  }).join(``)}
+         
 
             </ul>
 
