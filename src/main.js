@@ -2,9 +2,12 @@ import {render} from '../src/utils';
 import {Position} from "./const";
 
 import PageController from "../src/controllers/page-controller";
+import SearchController from "../src/controllers/search-controller";
+import MenuController from "../src/controllers/menu-controller";
 import Search from "../src/components/search";
 import Profile from "../src/components/profile";
 import Menu from "../src/components/menu";
+import Statistic from "../src/components/statistic";
 
 import {getFilm, getComments} from '../src/data';
 
@@ -12,47 +15,18 @@ const FILM_CARDS = 7;
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
 const cardMocks = new Array(FILM_CARDS).fill(``).map((it, index) => getFilm(index));
-const pageController = new PageController(mainElement, cardMocks, getComments());
-
-const renderSearch = () => {
-  const search = new Search();
-
-  render(headerElement, search.getElement(), Position.BEFOREEND);
-};
+const menu = new Menu(cardMocks);
+const statistics = new Statistic();
+const search = new Search();
+const pageController = new PageController(mainElement, cardMocks, search, getComments());
+const searchController = new SearchController(mainElement, search, cardMocks);
+const menuController = new MenuController(menu, mainElement);
 
 const renderProfile = () => {
   const userTitle = getUserGrade(cardMocks);
   const profile = new Profile(userTitle);
 
   render(headerElement, profile.getElement(), Position.BEFOREEND);
-};
-
-const renderFilter = (cards) => {
-  const filtersList = {
-    Watchlist: 0,
-    History: 0,
-    Favorites: 0
-  };
-
-  cards.forEach((card) => {
-    filtersList.Watchlist = card.isToWatchlist ? filtersList.Watchlist += 1 : filtersList.Watchlist;
-
-    filtersList.History = card.wasWatched ? filtersList.History += 1 : filtersList.History;
-
-    filtersList.Favorites = card.isFavorite ? filtersList.Favorites += 1 : filtersList.Favorites;
-  });
-
-  const filters = [];
-
-  for (let [key, value] of Object.entries(filtersList)) {
-    filters.push({
-      title: key,
-      count: value
-    });
-  }
-
-  const filter = new Menu(filters);
-  render(mainElement, filter.getElement(), Position.BEFOREEND);
 };
 
 const getUserGrade = (cardArr) => {
@@ -87,11 +61,44 @@ const setFooterStatistics = (cards) => {
   footerStatisticElement.textContent = `${cards.length} movies inside`;
 };
 
+
+menu.getElement().addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+
+  if (evt.target.tagName !== `A`) {
+    return;
+  }
+
+  if (evt.target.classList.contains(`main-navigation__item--active`)) {
+    return;
+  }
+
+  menu.getElement().querySelectorAll(`.main-navigation__item`)
+    .forEach((item) => item.classList.remove(`main-navigation__item--active`));
+
+  evt.target.classList.add(`main-navigation__item--active`);
+
+  switch (evt.target.classList.contains(`main-navigation__item--additional`)) {
+    case true:
+      statistics.getElement().classList.remove(`visually-hidden`);
+      pageController.hide();
+      break;
+    case false:
+      statistics.getElement().classList.add(`visually-hidden`);
+      pageController.show();
+      break;
+  }
+});
+
 const init = () => {
-  renderSearch();
+  render(headerElement, search.getElement(), Position.BEFOREEND);
   renderProfile();
-  renderFilter(cardMocks);
   pageController.init();
+  searchController.init();
+  menuController.init();
+  render(mainElement, statistics.getElement(), Position.BEFOREEND);
+  statistics.getElement().classList.add(`visually-hidden`);
+
   setFooterStatistics(cardMocks);
 };
 

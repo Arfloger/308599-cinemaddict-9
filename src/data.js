@@ -64,9 +64,3 @@ export const getComments = () => {
   return comments;
 };
 
-// export const getCommentsData = () => {
-//   return {
-//     comments: getComments()
-//   };
-// };
-

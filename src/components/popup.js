@@ -15,7 +15,7 @@ export default class Popup extends AbstractComponent {
     this._wasWatched = wasWatched;
     this._isFavorite = isFavorite;
     this._releaseDate = releaseDate;
-    this._commentsData = commentsData;
+    // this._commentsData = commentsData;
   }
 
   getRatingTemplate() {
@@ -152,28 +152,10 @@ export default class Popup extends AbstractComponent {
         
         <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsData.length}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
 
             <ul class="film-details__comments-list">
-              ${this._commentsData.map((it) => {
-
-    return `<li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/${it.emoji}.png" 
-                  width="55" 
-                  height="55" 
-                  alt="${it.emoji} emoji">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${it.textCom}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${it.author}</span>
-                    <span class="film-details__comment-day">${moment(it.date).format(`YY/MM/DD HH: MM`)}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-    </li>`.trim();
-  }).join(``)}
+              
          
 
             </ul>
@@ -216,3 +198,25 @@ export default class Popup extends AbstractComponent {
     `.trim();
   }
 }
+
+{/* <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsData.length}</span></h3> */}
+
+// ${this._commentsData.map((it) => {
+
+//   return `<li class="film-details__comment">
+//               <span class="film-details__comment-emoji">
+//                 <img src="./images/emoji/${it.emoji}.png" 
+//                 width="55" 
+//                 height="55" 
+//                 alt="${it.emoji} emoji">
+//               </span>
+//               <div>
+//                 <p class="film-details__comment-text">${it.textCom}</p>
+//                 <p class="film-details__comment-info">
+//                   <span class="film-details__comment-author">${it.author}</span>
+//                   <span class="film-details__comment-day">${moment(it.date).format(`YY/MM/DD HH: MM`)}</span>
+//                   <button class="film-details__comment-delete">Delete</button>
+//                 </p>
+//               </div>
+//   </li>`.trim();
+// }).join(``)}

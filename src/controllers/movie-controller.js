@@ -17,7 +17,6 @@ export default class MovieController {
 
   init() {
     render(this._container, this._card.getElement(), Position.BEFOREEND);
-
     const onRenderPopupClick = () => {
       render(document.body, this._popup.getElement(), Position.BEFOREEND);
     };
@@ -149,9 +148,14 @@ export default class MovieController {
 
       });
 
-    // this._popup.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, () => {
-    //   this._popup.getElement().querySelector(`.film-details__comment-delete`).closest(`.film-details__comment`).remove();
-    // });
+    this._popup.getElement().addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      if (evt.target.classList.contains(`film-details__comment-delete`)) {
+        // this._oncommentChange(null, this._data) передать null, создать 2 функции и еще подписку, добавить еще параметры в контроллер, думаю, структура поменяется и придется переделывать, когда данные придут с сервера. Не буду пока это реализовывать;
+      }
+
+    });
 
     this._popup.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, (evt) => {
       if (evt.target.tagName === `IMG`) {
