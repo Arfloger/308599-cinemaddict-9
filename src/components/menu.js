@@ -1,9 +1,37 @@
 import {AbstractComponent} from "../components/abstract-component";
 
 export default class Menu extends AbstractComponent {
-  constructor(filters) {
+  constructor(cards) {
     super();
-    this._filters = filters;
+    this._cards = cards;
+    this._filters = this.getFilterCount();
+  }
+
+  getFilterCount() {
+    const filtersList = {
+      Watchlist: 0,
+      History: 0,
+      Favorites: 0
+    };
+
+    this._cards.forEach((card) => {
+      filtersList.Watchlist = card.isToWatchlist ? filtersList.Watchlist += 1 : filtersList.Watchlist;
+
+      filtersList.History = card.wasWatched ? filtersList.History += 1 : filtersList.History;
+
+      filtersList.Favorites = card.isFavorite ? filtersList.Favorites += 1 : filtersList.Favorites;
+    });
+
+    const filters = [];
+
+    for (let [key, value] of Object.entries(filtersList)) {
+      filters.push({
+        title: key,
+        count: value
+      });
+    }
+
+    return filters;
   }
 
   getTemplate() {
