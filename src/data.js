@@ -37,13 +37,14 @@ export const getFilm = (index) => ({
   title: FILM_TITLES[index],
   poster: FILM_POSTERS[index],
   description: getRandomText(),
-  genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
-  rating: `${minMaxRandomRange(5, 9)}.${minMaxRandomRange(0, 9)}`,
+  genre: `${FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)]} ${FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)]} `,
+  rating: `${minMaxRandomRange(5, 9)}.${minMaxRandomRange(0, 9)} `,
   duration: 77,
   isToWatchlist: getRandomBoolean(),
   wasWatched: getRandomBoolean(),
   isFavorite: getRandomBoolean(),
   releaseDate: getRandomValue(1475924187819),
+  watchingDate: `2019-05-11T16:12:32.554Z`,
 });
 
 const getComment = () => ({
