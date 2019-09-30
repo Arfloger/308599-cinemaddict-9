@@ -11,7 +11,7 @@ export default class MovieController {
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._card = new Card(data);
-    this._popup = new Popup(data, commentsData);
+    this._popup = new Popup(data);
     this.init();
   }
 

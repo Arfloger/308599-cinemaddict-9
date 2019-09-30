@@ -3,19 +3,24 @@ import moment from 'moment';
 import 'moment-duration-format';
 
 export default class Popup extends AbstractComponent {
-  constructor({title, rating, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite, releaseDate}, commentsData) {
+  constructor({filmInfo, userDetails}) {
     super();
-    this._title = title;
-    this._rating = rating;
-    this._duration = duration;
-    this._genre = genre;
-    this._poster = poster;
-    this._description = description;
-    this._isToWatchlist = isToWatchlist;
-    this._wasWatched = wasWatched;
-    this._isFavorite = isFavorite;
-    this._releaseDate = releaseDate;
-    // this._commentsData = commentsData;
+    this._title = filmInfo.title;
+    this._alternativeTitle = filmInfo.alternativeTitle;
+    this._rating = filmInfo.totalRating;
+    this._ageRating = filmInfo.ageRating;
+    this._director = filmInfo.director;
+    this._writers = filmInfo.writers;
+    this._actors = filmInfo.actors;
+    this._releaseCountry = filmInfo.release.releaseCountry;
+    this._runtime = filmInfo.runtime;
+    this._genre = filmInfo.genre;
+    this._poster = filmInfo.poster;
+    this._description = filmInfo.description;
+    this._wasWatched = userDetails.alreadyWatched;
+    this._releaseDate = filmInfo.release.date;
+    this._isFavorite = `isFavorite`;
+    this._isToWatchlist = `isToWatchlist`;
   }
 
   getRatingTemplate() {
@@ -28,7 +33,7 @@ export default class Popup extends AbstractComponent {
 
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">
-          <img src="./images/posters/${this._poster}" alt="${this._title}" class="film-details__user-rating-img">
+          <img src="${this._poster}" alt="${this._title}" class="film-details__user-rating-img">
         </div>
 
         <section class="film-details__user-rating-inner">
@@ -82,16 +87,16 @@ export default class Popup extends AbstractComponent {
         </div>
         <div class="film-details__info-wrap">
             <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${this._poster}" alt="${this._title}">
+            <img class="film-details__poster-img" src="${this._poster}" alt="${this._title}">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${this._ageRating}+</p>
             </div>
 
             <div class="film-details__info">
             <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: The Great Flamarion</p>
+                <p class="film-details__title-original">${this._alternativeTitle}</p>
                 </div>
 
                 <div class="film-details__rating">
@@ -102,15 +107,15 @@ export default class Popup extends AbstractComponent {
             <table class="film-details__table">
                 <tbody><tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${this._director}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${this._writers.map((it) => it).join(`, `)}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${this._actors.map((it) => it).join(`, `)}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -118,16 +123,16 @@ export default class Popup extends AbstractComponent {
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${moment.duration(this._duration, `minutes`).format(`h[h] m[m]`)}</td>
+                <td class="film-details__cell">${ moment.duration(this._runtime, `minutes`).format(`h[h] m[m]`)}</td>
                 </tr>
                 <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${this._releaseCountry}</td>
                 </tr>
                 <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">Genr${this._genre.length > 1 ? `es` : `e` }</td>
                 <td class="film-details__cell">
-                    <span class="film-details__genre">${this._genre}</span>
+                    <span class="film-details__genre">${this._genre.map((it) => it).join(`, `)}</span>
                 </td>
                 </tr>
             </tbody></table>

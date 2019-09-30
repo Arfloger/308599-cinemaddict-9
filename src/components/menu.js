@@ -15,11 +15,11 @@ export default class Menu extends AbstractComponent {
     };
 
     this._cards.forEach((card) => {
-      filtersList.Watchlist = card.isToWatchlist ? filtersList.Watchlist += 1 : filtersList.Watchlist;
+      filtersList.Watchlist = card.userDetails.watchlist ? filtersList.Watchlist += 1 : filtersList.Watchlist;
 
-      filtersList.History = card.wasWatched ? filtersList.History += 1 : filtersList.History;
+      filtersList.History = card.userDetails.alreadyWatched ? filtersList.History += 1 : filtersList.History;
 
-      filtersList.Favorites = card.isFavorite ? filtersList.Favorites += 1 : filtersList.Favorites;
+      filtersList.Favorites = card.userDetails.favorite ? filtersList.Favorites += 1 : filtersList.Favorites;
     });
 
     const filters = [];
