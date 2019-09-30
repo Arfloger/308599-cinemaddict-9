@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {Position} from "../const";
 import {render, unrender} from "../utils";
 import Sort from "../components/sort";
@@ -30,8 +31,9 @@ export default class FilmListController {
   }
 
   showCards(cards) {
+    this._cards = cards;
     this._renderContainer();
-    
+
     if (cards.length === 0) {
       this._renderMessage();
       return;
@@ -84,21 +86,21 @@ export default class FilmListController {
     evt.target.classList.add(`sort__button--active`);
     this._mainFilmsContainer.getElement().querySelector(`.films-list__container`).innerHTML = ``;
 
-    let filterCards = null;
+    // let filterCards = null;
 
     switch (evt.target.dataset.sortType) {
       case `date-down`:
-        filterCards = this._cards.sort((a, b) => b.filmInfo.release.date - a.filmInfo.release.date);
+        this._cards = this._cards.sort((a, b) => moment(b.filmInfo.release.date) - moment(a.filmInfo.release.date));
         break;
       case `rating-down`:
-        filterCards = this._cards.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
+        this._cards = this._cards.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
         break;
       case `default`:
-        filterCards = this._cards.sort((a, b) => a.id - b.id);
+        this._cards = this._cards.sort((a, b) => a.id - b.id);
         break;
     }
 
-    this._updateCards(filterCards);
+    this._updateCards(this._cards);
 
   }
 
