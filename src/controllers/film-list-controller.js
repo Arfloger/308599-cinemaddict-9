@@ -86,8 +86,6 @@ export default class FilmListController {
     evt.target.classList.add(`sort__button--active`);
     this._mainFilmsContainer.getElement().querySelector(`.films-list__container`).innerHTML = ``;
 
-    // let filterCards = null;
-
     switch (evt.target.dataset.sortType) {
       case `date-down`:
         this._cards = this._cards.sort((a, b) => moment(b.filmInfo.release.date) - moment(a.filmInfo.release.date));
@@ -104,7 +102,7 @@ export default class FilmListController {
 
   }
 
-  _onDataChange(newData, oldData) {
+  _onDataChange(newData, oldData) {   
     this._cards[this._cards.findIndex((it) => it === oldData)] = newData;
     this._updateCards(this._cards);
   }

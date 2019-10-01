@@ -52,6 +52,9 @@ export default class MovieController {
         this._card.getElement()
         .querySelector(`.film-card__controls-item--add-to-watchlist`).classList.toggle(`film-card__controls-item--active`);
 
+ 
+        console.log(this._data);
+
         const entry = this.setNewDataCard();
         this._onDataChange(entry, this._data);
       });
@@ -74,6 +77,8 @@ export default class MovieController {
         this._card.getElement()
         .querySelector(`.film-card__controls-item--favorite`).classList.toggle(`film-card__controls-item--active`);
 
+        console.log(this._data);
+        
         const entry = this.setNewDataCard();
         this._onDataChange(entry, this._data);
       });
@@ -167,17 +172,33 @@ export default class MovieController {
 
   setNewDataCard() {
     const entry = {
-      title: this._card._title,
-      poster: this._card._poster,
-      description: this._card._description,
-      genre: this._card._genre,
-      rating: this._card._rating,
-      duration: this._card._duration,
-      isToWatchlist: this._card.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).classList.contains(`film-card__controls-item--active`) ? true : false,
-      wasWatched: this._card.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).classList.contains(`film-card__controls-item--active`) ? true : false,
-      isFavorite: this._card.getElement().querySelector(`.film-card__controls-item--favorite`).classList.contains(`film-card__controls-item--active`) ? true : false,
-      releaseDate: this._card._releaseDate,
+      id: this._card.id,
+      comments: this._card.comments,
+      filmInfo: {
+        title: this._card.filmInfo.title,
+        alternativeTitle: this._card.filmInfo.alternativeTitle,
+        totalRating: this._card.filmInfo.totalRating,
+        poster: this._card.filmInfo.poster,
+        ageRating: this._card.filmInfo.ageRating,
+        director: this._card.filmInfo.director,
+        writers: this._card.filmInfo.writers,
+        actors: this._card.filmInfo.actors,
+        release: {
+          date: this._card.filmInfo.release.date,
+          releaseCountry: this._card.filmInfo.release.releaseCountry,
+        },
+        runtime: this._card.filmInfo.runtime,
+        genre: this._card.filmInfo.genre,
+        description: this._card.filmInfo.description,
+      },
+      userDetails: {
+        personalRating: this._card.userDetails.personalRating,
+        watchlist: this._card.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).classList.contains(`film-card__controls-item--active`) ? true : false,
+        alreadyWatched: this._card.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).classList.contains(`film-card__controls-item--active`) ? true : false,
+        favorite: this._card.getElement().querySelector(`.film-card__controls-item--favorite`).classList.contains(`film-card__controls-item--active`) ? true : false,
+      },
     };
+
 
     return entry;
   }

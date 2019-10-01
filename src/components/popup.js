@@ -17,10 +17,10 @@ export default class Popup extends AbstractComponent {
     this._genre = filmInfo.genre;
     this._poster = filmInfo.poster;
     this._description = filmInfo.description;
-    this._wasWatched = userDetails.alreadyWatched;
     this._releaseDate = filmInfo.release.date;
-    this._isFavorite = `isFavorite`;
-    this._isToWatchlist = `isToWatchlist`;
+    this._wasWatched = userDetails.alreadyWatched;
+    this._isFavorite = userDetails.favorite;
+    this._isToWatchlist = userDetails.watchlist;
   }
 
   getRatingTemplate() {

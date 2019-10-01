@@ -5,12 +5,14 @@ import Films from "../components/films";
 import FilmsList from "../components/films-list";
 import FilmsListContainer from "../components/films-list-container";
 import SearchResult from "../components/search-result";
+import Search from "../components/search";
 
 export default class SearchController {
-  constructor(container, search, cards) {
+  constructor(container) {
+    this._headerElement = document.querySelector(`.header`);
     this._container = container;
-    this._search = search;
-    this._cards = cards;
+    this._search = new Search();
+    this._cards = [];
     this._films = new Films();
     this._filmsList = new FilmsList();
     this._count = 0;
@@ -18,7 +20,9 @@ export default class SearchController {
     this._mainFilmsContainer = new FilmsListContainer(`All movies. Upcoming`, false);
   }
 
-  init() {
+  init(cards) {
+    this._cards = cards;
+    render(this._headerElement, this._search.getElement(), Position.BEFOREEND);
     this.hide();
     this._searchResult.getElement().classList.add(`visually-hidden`);
     render(this._container, this._searchResult.getElement(), Position.BEFOREEND);
@@ -31,7 +35,7 @@ export default class SearchController {
       if (evt.target.value.length >= 3) {
         const {value} = evt.target;
         const searchCards = this._cards.filter((card) => {
-          return card.title.toLowerCase().includes(value.toLowerCase()
+          return card.filmInfo.title.toLowerCase().includes(value.toLowerCase()
           .split(`.`).join(``)
           .split(`,`).join(``)
           .split(`!`).join(``)
@@ -63,6 +67,21 @@ export default class SearchController {
       this.hide();
       this._searchResult.getElement().classList.add(`visually-hidden`);
     });
+
+    this._search.getElement().querySelector(`input`)
+    .addEventListener(`keyup`, (evt) => {
+      if (evt.target.value.length >= 3) {
+        this.hide();
+      } else {
+        this.show();
+      }
+    });
+
+    this._search.getElement().querySelector(`.search__reset`)
+    .addEventListener(`click`, () => {
+      this.show();
+    });
+
   }
 
   hide() {
