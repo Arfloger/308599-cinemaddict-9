@@ -1,6 +1,6 @@
 import {AbstractComponent} from "../components/abstract-component";
 
-export default class Menu extends AbstractComponent {
+export default class Filter extends AbstractComponent {
   constructor(cards) {
     super();
     this._cards = cards;

@@ -17,6 +17,11 @@ export const Method = {
   DELETE: `DELETE`
 };
 
+export const Mode = {
+  DEFAULT: `default`,
+  SEARCH: `search`
+};
+
 export const ChartOptions = {
   COLORS: {
     backgroundColor: `#ffe800`,

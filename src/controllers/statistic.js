@@ -4,7 +4,6 @@ import {render, unrender} from "../utils";
 import Statistic from '../components/statistic';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import ProfileController from "./profile-controller";
 
 export default class StatisticController {
   constructor(container) {
@@ -18,9 +17,8 @@ export default class StatisticController {
     this._topGenre = ``;
     this._userTitle = ``;
     this._chart = null;
-    this._statistic = null;
+    this._statistic = new Statistic();
     this._term = `all-time`;
-    this._profileController = new ProfileController();
   }
 
   _getWatchedCounts(cards) {
@@ -123,19 +121,6 @@ export default class StatisticController {
     };
   }
 
-  hide() {
-    this._userTitle = ``;
-    this._watchedCounts = 0;
-    this._watchedDuration = 0;
-    this._genres = ``;
-    this._wasWatched = [];
-    this._genresCount = {};
-    this._topGenre = ``;
-    this._userTitle = ``;
-    unrender(this._statistic.getElement());
-    this._statistic.removeElement();
-  }
-
   _update(cards) {
     this.hide();
     this.show(cards);
@@ -164,8 +149,11 @@ export default class StatisticController {
     this._getWatchedDuration(filtredCards);
     this._getGenres(this._wasWatched);
     this._getTopGanre();
-    this._userTitle = this._profileController._getUserGrade(filtredCards);
+    this._userTitle = `asd`;
     this._statistic = new Statistic(this._watchedCounts, this._watchedDuration, this._userTitle, this._topGenre);
+    this._statistic.getElement().querySelector(`[value="${this._term}"]`).checked = true;
+
+
     render(this._container, this._statistic.getElement(), Position.BEFOREEND);
     this._initChart();
 
@@ -181,5 +169,18 @@ export default class StatisticController {
 
       this._update(cards);
     });
+  }
+
+  hide() {
+    this._userTitle = ``;
+    this._watchedCounts = 0;
+    this._watchedDuration = 0;
+    this._genres = ``;
+    this._wasWatched = [];
+    this._genresCount = {};
+    this._topGenre = ``;
+    this._userTitle = ``;
+    unrender(this._statistic.getElement());
+    this._statistic.removeElement();
   }
 }
