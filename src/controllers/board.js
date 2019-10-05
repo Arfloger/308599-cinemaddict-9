@@ -9,18 +9,20 @@ import Sort from "../components/sort";
 import FilmsListController from "../controllers/film-list";
 
 export default class BoardController {
-  constructor(container, mode) {
+  constructor(container, mode, onDataChange) {
     this._MAX_CARD_TO_SHOW = 5;
     this._cardsOnPage = false;
     this._leftCardsToRender = 0;
     this._container = container;
     this._mode = mode;
+    this._onDataChangeMain = onDataChange;
     this._cards = null;
     this._sortCards = null;
     this._films = new Films();
     this._sort = new Sort();
+    this._onDataChange = this._onDataChange.bind(this);
     this._mainFilmsContainer = new FilmsListContainer(`All movies. Upcoming`, false);
-    this._filmListController = new FilmsListController(this._mainFilmsContainer.getElement().querySelector(`.films-list__container`));
+    this._filmListController = new FilmsListController(this._mainFilmsContainer.getElement().querySelector(`.films-list__container`), this._onDataChange);
     this._message = new Message();
     this._showMore = new ShowMore();
     this.init();
@@ -84,6 +86,10 @@ export default class BoardController {
 
   unrender() {
     this._mainFilmsContainer.getElement().querySelector(`.films-list__container`).innerHTML = ``;
+  }
+
+  _onDataChange(newData) {
+    this._onDataChangeMain(newData);
   }
 
   _renderShowMore() {

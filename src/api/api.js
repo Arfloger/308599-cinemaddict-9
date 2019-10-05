@@ -26,9 +26,19 @@ export default class API {
     .then(FilmModel.parseFilms);
   }
 
+  updateCard({id, data}) {
+    return this._load({
+      url: `movies/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON)
+      .then(FilmModel.parseFilm);
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {

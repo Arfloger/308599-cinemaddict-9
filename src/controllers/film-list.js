@@ -1,9 +1,11 @@
 import MovieController from "../controllers/movie";
 
 export default class filmListController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
     this._cards = [];
+    this._onDataChangeMain = onDataChange;
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   renderCards(cards) {
@@ -11,7 +13,11 @@ export default class filmListController {
   }
 
   _renderCard(container, card) {
-    const movieController = new MovieController(container, card);
+    const movieController = new MovieController(container, card, this._onDataChange);
+  }
+
+  _onDataChange(newData) {
+    this._onDataChangeMain(newData);
   }
 }
 

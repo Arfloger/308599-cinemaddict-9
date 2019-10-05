@@ -13,12 +13,13 @@ export default class PageController {
   constructor() {
     this._container = document.querySelector(`.main`);
     this._cards = [];
+    this._onDataChange = this._onDataChange.bind(this);
     this._filter = null;
     this._filterMode = `#all`;
 
     this._api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
     this._statisticController = new StatisticController(this._container);
-    this._boardController = new BoardController(this._container, Mode.DEFAULT);
+    this._boardController = new BoardController(this._container, Mode.DEFAULT, this._onDataChange);
     this._search = new Search();
     this._searchController = new SearchController(this._container, this._search);
   }
@@ -116,6 +117,22 @@ export default class PageController {
       }
 
     });
+  }
+
+  _onDataChange(newData) {
+    // debugger
+    this._api.updateCard({
+      id: newData.id,
+      data: newData.toRAW(),
+    })
+      .then(() => this._api.getCards())
+      .then((cards) => {
+        this._cards = cards;
+
+        // здесь обновлять фильтры
+        // здесь обновлять ранг пользователя
+        this._boardController.showCards(this._cards);
+      });
   }
 }
 
