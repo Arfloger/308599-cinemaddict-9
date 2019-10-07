@@ -67,5 +67,7 @@ export default class MovieController {
     this._popup.getElement()
         .querySelector(`.film-details__close-btn`)
         .addEventListener(`click`, this._unrenderPopup.bind(this));
+
+        //test
   }
 }
