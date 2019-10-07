@@ -35,14 +35,17 @@ export default class BoardController {
     if (this._mode === `default`) {
       render(this._films.getElement(), this._sort.getElement(), Position.AFTERBEGIN);
       this._sort.getElement().addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
-      this._renderShowMore();
+      // this._renderShowMore();
     }
   }
 
   showCards(cards) {
     this._cards = cards;
+
     this._sortCards = Object.assign([], this._cards);
 
+    this.unrender();
+    this._renderShowMore();
     if (this._mode === `search`) {
       this._filmListController.renderCards(this._sortCards);
       return;
@@ -50,13 +53,14 @@ export default class BoardController {
 
     if (this._sortCards.length === 0) {
       render(this._container, this._message.getElement(), Position.BEFOREEND);
+      this._unrenderShowMore();
       return;
     } else if (this._sortCards.length <= this._MAX_CARD_TO_SHOW) {
       this._filmListController.renderCards(this._sortCards);
+      this._unrenderShowMore();
       return;
     }
 
-    this.unrender();
 
     if (this._cardsOnPage === false) {
       this._cardsOnPage += this._MAX_CARD_TO_SHOW;
@@ -69,10 +73,6 @@ export default class BoardController {
     if (this._leftCardsToRender <= 0) {
       this._unrenderShowMore();
     }
-
-    console.log(`осталось ${this._leftCardsToRender}`);
-    console.log(`На странице ${this._cardsOnPage}`);
-    
 
   }
 

@@ -8,7 +8,7 @@ export default class Message extends AbstractComponent {
   getTemplate() {
     return `
     <div class="no-result">
-      There is no movies for your request.
+      There are no movies in our database
     </div>
     `.trim();
   }

@@ -15,7 +15,6 @@ export default class StatisticController {
     this._wasWatched = [];
     this._genresCount = {};
     this._topGenre = ``;
-    this._userTitle = ``;
     this._chart = null;
     this._statistic = new Statistic();
     this._term = `all-time`;
@@ -123,7 +122,7 @@ export default class StatisticController {
 
   _update(cards) {
     this.hide();
-    this.show(cards);
+    this.show(cards, this._userTitle);
   }
 
   _getTerm(term, cards) {
@@ -143,13 +142,13 @@ export default class StatisticController {
     return null;
   }
 
-  show(cards) {
+  show(cards, userTitle) {
     const filtredCards = this._getTerm(this._term, cards);
     this._getWatchedCounts(filtredCards);
     this._getWatchedDuration(filtredCards);
     this._getGenres(this._wasWatched);
     this._getTopGanre();
-    this._userTitle = `asd`;
+    this._userTitle = userTitle;
     this._statistic = new Statistic(this._watchedCounts, this._watchedDuration, this._userTitle, this._topGenre);
     this._statistic.getElement().querySelector(`[value="${this._term}"]`).checked = true;
 
@@ -172,14 +171,12 @@ export default class StatisticController {
   }
 
   hide() {
-    this._userTitle = ``;
     this._watchedCounts = 0;
     this._watchedDuration = 0;
     this._genres = ``;
     this._wasWatched = [];
     this._genresCount = {};
     this._topGenre = ``;
-    this._userTitle = ``;
     unrender(this._statistic.getElement());
     this._statistic.removeElement();
   }
