@@ -1,3 +1,6 @@
+export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
+export const END_POINT = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;
+
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
@@ -5,6 +8,18 @@ export const Position = {
 
 export const Keycode = {
   ESC: 27
+};
+
+export const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+export const Mode = {
+  DEFAULT: `default`,
+  SEARCH: `search`
 };
 
 export const ChartOptions = {

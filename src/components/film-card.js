@@ -3,18 +3,19 @@ import moment from 'moment';
 import 'moment-duration-format';
 
 export default class Card extends AbstractComponent {
-  constructor({title, rating, duration, genre, poster, description, isToWatchlist, wasWatched, isFavorite, releaseDate}) {
+  constructor({comments, filmInfo, userDetails}) {
     super();
-    this._title = title;
-    this._rating = rating;
-    this._duration = duration;
-    this._genre = genre;
-    this._poster = poster;
-    this._description = description;
-    this._isToWatchlist = isToWatchlist;
-    this._wasWatched = wasWatched;
-    this._isFavorite = isFavorite;
-    this._releaseDate = releaseDate;
+    this._comments = comments;
+    this._title = filmInfo.title;
+    this._rating = filmInfo.totalRating;
+    this._duration = filmInfo.runtime;
+    this._genre = filmInfo.genre;
+    this._poster = filmInfo.poster;
+    this._description = filmInfo.description;
+    this._isToWatchlist = userDetails.watchlist;
+    this._wasWatched = userDetails.alreadyWatched;
+    this._isFavorite = userDetails.favorite;
+    this._releaseDate = filmInfo.release.date;
   }
 
   getTemplate() {
@@ -25,11 +26,11 @@ export default class Card extends AbstractComponent {
         <p class="film-card__info">
             <span class="film-card__year">${moment(this._releaseDate).format(`DD MMM YYYY`)}</span>
             <span class="film-card__duration">${moment.duration(this._duration, `minutes`).format(`h[h] m[m]`)}</span>
-            <span class="film-card__genre">${this._genre}</span>
+            <span class="film-card__genre">${this._genre.map((it) => it).join(`, `)}</span>
         </p>
-        <img src="./images/posters/${this._poster}" alt="${this._title}" class="film-card__poster">
+        <img src="${this._poster}" alt="${this._title}" class="film-card__poster">
         <p class="film-card__description">${this._description}</p>
-        <a class="film-card__comments">5 comments</a>
+        <a class="film-card__comments">${this._comments.length} comments</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._isToWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._wasWatched ? `film-card__controls-item--active` : ``}">Mark as watched</button>

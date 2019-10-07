@@ -1,14 +1,14 @@
+import moment from 'moment';
 import {Position, ChartOptions} from "../const";
-import {render} from "../utils";
+import {render, unrender} from "../utils";
 import Statistic from '../components/statistic';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default class StatisticController {
-  constructor(container, cards, userTitle) {
+  constructor(container) {
     this._container = container;
-    this._cards = cards;
-    this._userTitle = userTitle;
+    this._userTitle = ``;
     this._watchedCounts = 0;
     this._watchedDuration = 0;
     this._genres = ``;
@@ -16,33 +16,33 @@ export default class StatisticController {
     this._genresCount = {};
     this._topGenre = ``;
     this._chart = null;
-    this._statistic = null;
+    this._statistic = new Statistic();
+    this._term = `all-time`;
   }
 
   _getWatchedCounts(cards) {
     cards.forEach((card) => {
-      if (!card.wasWatched) {
+      if (!card.userDetails.alreadyWatched) {
         return;
       }
 
       this._wasWatched.push(card);
-      this._watchedCounts = card.wasWatched ? this._watchedCounts += 1 : this._watchedCounts;
+      this._watchedCounts = card.userDetails.alreadyWatched ? this._watchedCounts += 1 : this._watchedCounts;
     });
   }
 
   _getWatchedDuration(cards) {
     cards.forEach((card) => {
-      this._watchedDuration += card.duration;
+      this._watchedDuration += card.filmInfo.runtime;
     });
   }
 
   _getGenres(cards) {
-    let allGenres = ``;
+    let allGenres = [];
     cards.forEach((card) => {
-      allGenres += card.genre;
+      allGenres = allGenres.concat(card.filmInfo.genre);
     });
 
-    allGenres = allGenres.split(` `);
     this._genres = Array.from(new Set(allGenres));
 
     for (let i = 0; i < this._genres.length; i++) {
@@ -120,15 +120,64 @@ export default class StatisticController {
     };
   }
 
-  init() {
-    this._getWatchedCounts(this._cards);
-    this._getWatchedDuration(this._cards);
+  _update(cards) {
+    this.hide();
+    this.show(cards, this._userTitle);
+  }
+
+  _getTerm(term, cards) {
+    switch (term) {
+      case `all-time`:
+        return cards;
+      case `today`:
+        return cards.filter((it) => moment().isSame(moment(it.userDetails.watchingDate), `day`));
+      case `week`:
+        return cards.filter((it) => moment(it.userDetails.watchingDate) > moment().subtract(1, `w`));
+      case `month`:
+        return cards.filter((it) => moment(it.userDetails.watchingDate) > moment().subtract(1, `months`));
+      case `year`:
+        return cards.filter((it) => moment(it.userDetails.watchingDate) > moment().subtract(1, `y`));
+    }
+
+    return null;
+  }
+
+  show(cards, userTitle) {
+    const filtredCards = this._getTerm(this._term, cards);
+    this._getWatchedCounts(filtredCards);
+    this._getWatchedDuration(filtredCards);
     this._getGenres(this._wasWatched);
     this._getTopGanre();
-
+    this._userTitle = userTitle;
     this._statistic = new Statistic(this._watchedCounts, this._watchedDuration, this._userTitle, this._topGenre);
+    this._statistic.getElement().querySelector(`[value="${this._term}"]`).checked = true;
+
+
     render(this._container, this._statistic.getElement(), Position.BEFOREEND);
     this._initChart();
-    // statistic.getElement().classList.add(`visually-hidden`);
+
+    this._statistic.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
+
+      const targetElement = evt.target;
+
+      if (targetElement.tagName !== `INPUT`) {
+        return;
+      }
+
+      this._term = targetElement.value;
+
+      this._update(cards);
+    });
+  }
+
+  hide() {
+    this._watchedCounts = 0;
+    this._watchedDuration = 0;
+    this._genres = ``;
+    this._wasWatched = [];
+    this._genresCount = {};
+    this._topGenre = ``;
+    unrender(this._statistic.getElement());
+    this._statistic.removeElement();
   }
 }
