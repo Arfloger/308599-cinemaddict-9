@@ -7,7 +7,9 @@ export const Position = {
 };
 
 export const Keycode = {
-  ESC: 27
+  ESC: 27,
+  ENTER: 13,
+  CONTROL: 17
 };
 
 export const Method = {
@@ -20,6 +22,12 @@ export const Method = {
 export const Mode = {
   DEFAULT: `default`,
   SEARCH: `search`
+};
+
+export const Color = {
+  SELECTED: `#ffe800`,
+  DEFAULT: `#d8d8d8`,
+  ERROR: `red`
 };
 
 export const ChartOptions = {

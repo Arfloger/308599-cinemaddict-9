@@ -21,7 +21,7 @@ export default class PageController {
 
     this._api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
     this._statisticController = new StatisticController(this._container);
-    this._boardController = new BoardController(this._container, Mode.DEFAULT, this._onDataChange);
+    this._boardController = new BoardController(this._container, Mode.DEFAULT, this._onDataChange, this._api);
     this._profileController = new ProfileController();
     this._search = new Search();
     this._searchController = new SearchController(this._container, this._search);
@@ -190,8 +190,10 @@ export default class PageController {
         this._profileController.init(this._getUserTitle(cards));
         this._unrenderFilter();
         this._renderFilter(cards);
-        this._getFilteredCards(this._cards, this._filterMode);
+        this._cards = this._getFilteredCards(this._cards, this._filterMode);
         this._filter.getElement().querySelector(`[href="${this._filterMode}"]`).classList.add(`main-navigation__item--active`);
+        this._boardController.showCards(this._cards);
+
       });
   }
 }

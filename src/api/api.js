@@ -1,6 +1,5 @@
 import {Method} from "../const";
 import FilmModel from "./film-model";
-// import CommentModel from "./film-model";
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -24,6 +23,28 @@ export default class API {
     return this._load({url: `movies`})
     .then(toJSON)
     .then(FilmModel.parseFilms);
+  }
+
+  getComments(cardId) {
+    return this._load({url: `comments/${cardId}`})
+      .then(toJSON);
+  }
+
+  createComment(cardId, comment) {
+    return this._load({
+      url: `comments/${cardId}`,
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON);
+  }
+
+  deleteComment(commentId) {
+    return this._load({
+      url: `comments/${commentId}`,
+      method: Method.DELETE
+    });
   }
 
   updateCard({id, data}) {
