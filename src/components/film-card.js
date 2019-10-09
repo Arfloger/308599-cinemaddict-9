@@ -5,6 +5,7 @@ import 'moment-duration-format';
 export default class Card extends AbstractComponent {
   constructor({comments, filmInfo, userDetails}) {
     super();
+    this._MAX_DESCRIPTION_LENGTH = 139;
     this._comments = comments;
     this._title = filmInfo.title;
     this._rating = filmInfo.totalRating;
@@ -29,7 +30,7 @@ export default class Card extends AbstractComponent {
             <span class="film-card__genre">${this._genre.map((it) => it).join(`, `)}</span>
         </p>
         <img src="${this._poster}" alt="${this._title}" class="film-card__poster">
-        <p class="film-card__description">${this._description}</p>
+        <p class="film-card__description">${this._description.length > this._MAX_DESCRIPTION_LENGTH ? this._description.slice(0, this._MAX_DESCRIPTION_LENGTH) + `...` : this._description }</p>
         <a class="film-card__comments">${this._comments.length} comments</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._isToWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>

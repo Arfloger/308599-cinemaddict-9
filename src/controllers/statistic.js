@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {Position, ChartOptions} from "../const";
+import {Position, ChartOption} from "../const";
 import {render, unrender} from "../utils";
 import Statistic from '../components/statistic';
 import Chart from 'chart.js';
@@ -74,31 +74,31 @@ export default class StatisticController {
       datasets: [
         {
           data,
-          backgroundColor: ChartOptions.COLORS.backgroundColor,
-          hoverBackgroundColor: ChartOptions.COLORS.hoverBackgroundColor,
+          backgroundColor: ChartOption.COLORS.backgroundColor,
+          hoverBackgroundColor: ChartOption.COLORS.hoverBackgroundColor,
         },
       ],
     };
     const barOptions = {
       plugins: {
         datalabels: {
-          font: {size: ChartOptions.OPTIONS.datalabel.fontSize},
-          color: ChartOptions.OPTIONS.datalabel.color,
-          anchor: ChartOptions.OPTIONS.datalabel.anchor,
-          align: ChartOptions.OPTIONS.datalabel.align,
-          offset: ChartOptions.OPTIONS.datalabel.offset,
+          font: {size: ChartOption.OPTIONS.datalabel.fontSize},
+          color: ChartOption.OPTIONS.datalabel.color,
+          anchor: ChartOption.OPTIONS.datalabel.anchor,
+          align: ChartOption.OPTIONS.datalabel.align,
+          offset: ChartOption.OPTIONS.datalabel.offset,
         },
       },
       animation: {
-        easing: ChartOptions.OPTIONS.animationEasing
+        easing: ChartOption.OPTIONS.animationEasing
       },
       scales: {
         yAxes: [{
-          barThickness: ChartOptions.OPTIONS.yAxes.barThickness,
+          barThickness: ChartOption.OPTIONS.yAxes.barThickness,
           ticks: {
-            fontColor: ChartOptions.OPTIONS.yAxes.ticks.fontColor,
-            padding: ChartOptions.OPTIONS.yAxes.ticks.padding,
-            fontSize: ChartOptions.OPTIONS.yAxes.ticks.fontSize,
+            fontColor: ChartOption.OPTIONS.yAxes.ticks.fontColor,
+            padding: ChartOption.OPTIONS.yAxes.ticks.padding,
+            fontSize: ChartOption.OPTIONS.yAxes.ticks.fontSize,
           },
         }],
         xAxes: [{
@@ -157,7 +157,6 @@ export default class StatisticController {
     this._initChart();
 
     this._statistic.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
-
       const targetElement = evt.target;
 
       if (targetElement.tagName !== `INPUT`) {

@@ -8,8 +8,7 @@ export const Position = {
 
 export const Keycode = {
   ESC: 27,
-  ENTER: 13,
-  CONTROL: 17
+  ENTER: 13
 };
 
 export const Method = {
@@ -30,7 +29,7 @@ export const Color = {
   ERROR: `red`
 };
 
-export const ChartOptions = {
+export const ChartOption = {
   COLORS: {
     backgroundColor: `#ffe800`,
     hoverBackgroundColor: `#afa013`

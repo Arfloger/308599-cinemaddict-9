@@ -9,25 +9,28 @@ import ProfileController from "../controllers/profile";
 
 import Filter from "../components/filter";
 import Search from "../components/search";
+import Loading from "../components/loading";
 
 export default class PageController {
   constructor() {
     this._container = document.querySelector(`.main`);
     this._cards = [];
-    this._onDataChange = this._onDataChange.bind(this);
     this._filter = null;
     this._filterMode = `#all`;
     this._userTitle = ``;
-
     this._api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+    this._onDataChange = this._onDataChange.bind(this);
     this._statisticController = new StatisticController(this._container);
     this._boardController = new BoardController(this._container, Mode.DEFAULT, this._onDataChange, this._api);
+    this._loading = new Loading();
     this._profileController = new ProfileController();
     this._search = new Search();
     this._searchController = new SearchController(this._container, this._search);
+    this._isLoading = false;
   }
 
   init() {
+    render(this._container, this._loading.getElement(), Position.BEFOREEND);
     this._api.getCards()
           .then((cards) => {
             this._cards = cards;
@@ -42,6 +45,13 @@ export default class PageController {
             this._search.getElement().querySelector(`input`).addEventListener(`keyup`, this._onSearchInputKeydown.bind(this));
 
             this._search.getElement().querySelector(`.search__reset`).addEventListener(`click`, this._showMainScreen.bind(this));
+
+            this._isLoading = true;
+
+            if (this._isLoading) {
+              unrender(this._loading.getElement());
+              this._loading.removeElement();
+            }
 
           });
   }
@@ -59,6 +69,8 @@ export default class PageController {
   _renderFilter(cards) {
     this._filter = new Filter(cards);
     render(this._container, this._filter.getElement(), Position.AFTERBEGIN);
+
+    this._filter.getElement().querySelector(`[href="${this._filterMode}"]`).classList.add(`main-navigation__item--active`);
 
     this._filter.getElement().addEventListener(`click`, (evt) => {
 
@@ -80,10 +92,13 @@ export default class PageController {
       switch (currentNavElement) {
         case `#stats`:
           this._filterMode = `#stats`;
-          this._statisticController.show(this._cards, this._userTitle);
+          this._statisticController.show(filterCards, this._userTitle);
           this._searchController.hide();
           this._boardController.hide();
-          break;
+          if (document.querySelector(`.films + .no-result`)) {
+            document.querySelector(`.films + .no-result`).remove();
+          }
+          return;
         case `#all`:
           this._filterMode = `#all`;
           this._showMainScreen();
@@ -191,7 +206,6 @@ export default class PageController {
         this._unrenderFilter();
         this._renderFilter(cards);
         this._cards = this._getFilteredCards(this._cards, this._filterMode);
-        this._filter.getElement().querySelector(`[href="${this._filterMode}"]`).classList.add(`main-navigation__item--active`);
         this._boardController.showCards(this._cards);
 
       });

@@ -2,6 +2,7 @@ import {Position, Color, Keycode} from "../const";
 import {render, unrender} from "../utils";
 import Card from "../components/film-card";
 import Popup from "../components/popup";
+import DOMPurify from "dompurify";
 
 export default class MovieController {
   constructor(container, data, onDataChange, api) {
@@ -12,6 +13,7 @@ export default class MovieController {
     this._api = api;
     this._card = new Card(data);
     this._popup = null;
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this.init();
   }
 
@@ -20,6 +22,18 @@ export default class MovieController {
 
     this._card.getElement()
     .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, () => {
+      this._api.getComments(this._data.id).then((comments) => this._renderPopup(comments));
+    });
+
+    this._card.getElement()
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, () => {
+      this._api.getComments(this._data.id).then((comments) => this._renderPopup(comments));
+    });
+
+    this._card.getElement()
+    .querySelector(`.film-card__comments`)
     .addEventListener(`click`, () => {
       this._api.getComments(this._data.id).then((comments) => this._renderPopup(comments));
     });
@@ -99,6 +113,12 @@ export default class MovieController {
     this._popup.getElement()
         .querySelector(`.film-details__close-btn`)
         .addEventListener(`click`, this._unrenderPopup.bind(this));
+
+    document.addEventListener(`keydown`, this._onEscKeyDown);
+
+    commentInput.addEventListener(`focus`, () => document.removeEventListener(`keydown`, this._onEscKeyDown));
+
+    commentInput.addEventListener(`blur`, () => document.addEventListener(`keydown`, this._onEscKeyDown));
 
     watchLinkPopup.addEventListener(`change`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
@@ -206,16 +226,21 @@ export default class MovieController {
 
       if (evt.target.tagName === `IMG`) {
         this._popup.getElement().querySelector(`.film-details__add-emoji-label img`).src = evt.target.src;
+
+        const labelId = evt.target.closest(`.film-details__emoji-label`).getAttribute(`for`);
+        this._popup.getElement().querySelector(`#${labelId}`).checked = true;
+
       }
     });
 
     commentInput.addEventListener(`keydown`, (evt) => {
 
-      if (evt.keyCode === Keycode.ENTER && evt.ctrlKey && commentInput.value) {
-
+      if (evt.keyCode === Keycode.ENTER && evt.ctrlKey && !commentInput.value || evt.keyCode === Keycode.ENTER && evt.ctrlKey && !this._popup.getElement().querySelector(`input[name="comment-emoji"]:checked`)) {
+        commentInput.style.animation = `shake 0.6s`;
+      } else if (evt.keyCode === Keycode.ENTER && evt.ctrlKey && commentInput.value) {
         blockCommentInput();
         let newComment = {
-          'comment': commentInput.value,
+          'comment': DOMPurify.sanitize(commentInput.value),
           'emotion': this._popup.getElement().querySelector(`input[name="comment-emoji"]:checked`).value,
           'date': new Date().toISOString(),
         };
@@ -233,9 +258,8 @@ export default class MovieController {
           unblockCommentInput();
 
           let checkedInput = this._popup.getElement().querySelector(`INPUT[name="comment-emoji"]:checked`);
-          // emojiContainer.innerHTML = ``;
           commentInput.value = ``;
-          commentInput.style.border = `none`;
+          commentInput.style = ``;
           checkedInput.checked = false;
         })
         .catch(() => {
@@ -246,6 +270,12 @@ export default class MovieController {
       }
 
     });
+  }
 
+  _onEscKeyDown(evt) {
+    if (evt.keyCode === Keycode.ESC) {
+      this._unrenderPopup();
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
+    }
   }
 }

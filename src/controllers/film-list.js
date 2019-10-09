@@ -7,6 +7,7 @@ export default class filmListController {
     this._cards = [];
     this._onDataChangeMain = onDataChange;
     this._onDataChange = this._onDataChange.bind(this);
+    this._movieController = null;
   }
 
   renderCards(cards) {
@@ -14,7 +15,7 @@ export default class filmListController {
   }
 
   _renderCard(container, card) {
-    const movieController = new MovieController(container, card, this._onDataChange, this._api);
+    this._movieController = new MovieController(container, card, this._onDataChange, this._api);
   }
 
   _onDataChange(newData) {
