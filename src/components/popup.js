@@ -1,9 +1,11 @@
 import {AbstractComponent} from "../components/abstract-component";
+import {render} from "../utils";
+import {Position} from "../const";
 import moment from 'moment';
 import 'moment-duration-format';
 
 export default class Popup extends AbstractComponent {
-  constructor({filmInfo, userDetails}) {
+  constructor({filmInfo, userDetails}, comments) {
     super();
     this._title = filmInfo.title;
     this._alternativeTitle = filmInfo.alternativeTitle;
@@ -21,9 +23,12 @@ export default class Popup extends AbstractComponent {
     this._wasWatched = userDetails.alreadyWatched;
     this._isFavorite = userDetails.favorite;
     this._isToWatchlist = userDetails.watchlist;
+    this._personalRating = userDetails.personalRating;
+    this._comments = comments;
   }
 
   getRatingTemplate() {
+
     return `
     <div class="form-details__middle-container ${this._wasWatched ? `` : `visually-hidden`}">
     <section class="film-details__user-rating-wrap">
@@ -42,31 +47,32 @@ export default class Popup extends AbstractComponent {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+          
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${this._personalRating === 1 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${this._personalRating === 2 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${this._personalRating === 3 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${this._personalRating === 4 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${this._personalRating === 5 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${this._personalRating === 6 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${this._personalRating === 7 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${this._personalRating === 8 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked="">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${this._personalRating === 9 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-9">9</label>
 
           </div>
@@ -157,10 +163,29 @@ export default class Popup extends AbstractComponent {
         
         <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-              
+
+          ${this._comments.map((it) => {
+
+    return `<li class="film-details__comment" data-item="${it.id}">
+                          <span class="film-details__comment-emoji">
+                            <img src="./images/emoji/${it.emotion}.png" 
+                            width="55" 
+                            height="55" 
+                            alt="${it.emotion} emoji">
+                          </span>
+                          <div>
+                            <p class="film-details__comment-text">${it.comment}</p>
+                            <p class="film-details__comment-info">
+                              <span class="film-details__comment-author">${it.author}</span>
+                              <span class="film-details__comment-day">${moment(it.date).format(`YY/MM/DD HH: MM`)}</span>
+                              <button class="film-details__comment-delete" data-comment="${it.id}">Delete</button>
+                            </p>
+                          </div>
+              </li>`.trim();
+  }).join(``)}
          
 
             </ul>
@@ -175,22 +200,22 @@ export default class Popup extends AbstractComponent {
             </label>
 
             <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping" checked="">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" checked="">
                 <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
                 <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke">
                 <label class="film-details__emoji-label" for="emoji-gpuke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
                 </label>
 
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
+                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
                 <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
                 </label>
@@ -202,26 +227,30 @@ export default class Popup extends AbstractComponent {
     </section>
     `.trim();
   }
+
+  updateCommentsCount(count) {
+    this.getElement().querySelector(`.film-details__comments-count`).innerText = count;
+  }
+
+  addComment(data) {
+    const liElement = document.createElement(`li`);
+    liElement.setAttribute(`data-item`, data.id);
+    liElement.classList.add(`film-details__comment`);
+
+    render(this.getElement().querySelector(`.film-details__comments-list`), liElement, Position.BEFOREEND);
+    liElement.innerHTML = `<span class="film-details__comment-emoji">
+    <img src="./images/emoji/${data.emotion}.png" 
+    width="55" 
+    height="55" 
+    alt="${data.emotion} emoji">
+  </span>
+  <div>
+    <p class="film-details__comment-text">${data.comment}</p>
+    <p class="film-details__comment-info">
+      <span class="film-details__comment-author">${data.author}</span>
+      <span class="film-details__comment-day">${moment(data.date).format(`YY/MM/DD HH: MM`)}</span>
+      <button class="film-details__comment-delete" data-comment="${data.id}">Delete</button>
+    </p>
+  </div>`;
+  }
 }
-
-{/* <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsData.length}</span></h3> */}
-
-// ${this._commentsData.map((it) => {
-
-//   return `<li class="film-details__comment">
-//               <span class="film-details__comment-emoji">
-//                 <img src="./images/emoji/${it.emoji}.png" 
-//                 width="55" 
-//                 height="55" 
-//                 alt="${it.emoji} emoji">
-//               </span>
-//               <div>
-//                 <p class="film-details__comment-text">${it.textCom}</p>
-//                 <p class="film-details__comment-info">
-//                   <span class="film-details__comment-author">${it.author}</span>
-//                   <span class="film-details__comment-day">${moment(it.date).format(`YY/MM/DD HH: MM`)}</span>
-//                   <button class="film-details__comment-delete">Delete</button>
-//                 </p>
-//               </div>
-//   </li>`.trim();
-// }).join(``)}
