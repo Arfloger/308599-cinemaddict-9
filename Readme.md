@@ -1,14 +1,14 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ксения Мельникова](https://up.htmlacademy.ru/ecmascript/9/user/308599).
-* Наставник: [Виталий Усик] (https://htmlacademy.ru/profile/id235226).
+* Наставник: [Виталий Усик](https://htmlacademy.ru/profile/id235226).
 
----
+----
 
 _Не удаляйте и не изменяйте папки и файлы:_
 _`.editorconfig`, `.gitattributes`, `.gitignore`, `.travis.yml`, `package.json`._
 
----
+----
 
 ### Памятка
 
