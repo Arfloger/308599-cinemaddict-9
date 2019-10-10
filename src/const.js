@@ -29,6 +29,21 @@ export const Color = {
   ERROR: `red`
 };
 
+export const FilterName = {
+  STATS: `#stats`,
+  ALL: `#all`,
+  WATCHLIST: `#Watchlist`,
+  HISTORY: `#History`,
+  FAVORITES: `#Favorites`
+};
+
+export const UserRating = {
+  NOTHING: 0,
+  NOVICE: 10,
+  FAN: 20,
+  MOVIE_BUFF: 20
+};
+
 export const ChartOption = {
   COLORS: {
     backgroundColor: `#ffe800`,

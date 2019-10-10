@@ -1,4 +1,4 @@
-import {AUTHORIZATION, END_POINT, Position, Mode} from "../const";
+import {AUTHORIZATION, END_POINT, Position, Mode, FilterName, UserRating} from "../const";
 import {render, unrender} from "../utils";
 
 import API from "../api/api";
@@ -82,7 +82,7 @@ export default class PageController {
         return;
       }
 
-      let filterCards = Object.assign([], cards);
+      let filterCards = cards.slice();
 
       this._filter.getElement().querySelector(`[href="${this._filterMode}"]`).classList.remove(`main-navigation__item--active`);
 
@@ -90,8 +90,8 @@ export default class PageController {
       const currentNavElement = evt.target.href.slice(evt.target.href.indexOf(`#`));
 
       switch (currentNavElement) {
-        case `#stats`:
-          this._filterMode = `#stats`;
+        case FilterName.STATS:
+          this._filterMode = FilterName.STATS;
           this._statisticController.show(filterCards, this._userTitle);
           this._searchController.hide();
           this._boardController.hide();
@@ -99,20 +99,20 @@ export default class PageController {
             document.querySelector(`.films + .no-result`).remove();
           }
           return;
-        case `#all`:
-          this._filterMode = `#all`;
+        case FilterName.ALL:
+          this._filterMode = FilterName.ALL;
           this._showMainScreen();
           break;
-        case `#Watchlist`:
-          this._filterMode = `#Watchlist`;
+        case FilterName.WATCHLIST:
+          this._filterMode = FilterName.WATCHLIST;
           this._showMainScreen();
           break;
-        case `#History`:
-          this._filterMode = `#History`;
+        case FilterName.HISTORY:
+          this._filterMode = FilterName.HISTORY;
           this._showMainScreen();
           break;
-        case `#Favorites`:
-          this._filterMode = `#Favorites`;
+        case FilterName.FAVORITES:
+          this._filterMode = FilterName.FAVORITES;
           this._showMainScreen();
           break;
       }
@@ -127,18 +127,18 @@ export default class PageController {
     let filterCards;
 
     switch (mode) {
-      case `#stats`:
+      case FilterName.STATS:
         break;
-      case `#all`:
+      case FilterName.ALL:
         filterCards = cards;
         break;
-      case `#Watchlist`:
+      case FilterName.WATCHLIST:
         filterCards = cards.filter((it) => it.userDetails.watchlist);
         break;
-      case `#History`:
+      case FilterName.HISTORY:
         filterCards = cards.filter((it) => it.userDetails.alreadyWatched);
         break;
-      case `#Favorites`:
+      case FilterName.FAVORITES:
         filterCards = cards.filter((it) => it.userDetails.favorite);
         break;
     }
@@ -154,16 +154,16 @@ export default class PageController {
     });
 
     switch (true) {
-      case watchedCount === 0:
+      case watchedCount === UserRating.NOTHING:
         this._userTitle = ``;
         break;
-      case watchedCount <= 10:
+      case watchedCount <= UserRating.NOVICE:
         this._userTitle = `novice`;
         break;
-      case watchedCount <= 20:
+      case watchedCount <= UserRating.FAN:
         this._userTitle = `fan`;
         break;
-      case watchedCount > 20:
+      case watchedCount > UserRating.MOVIE_BUFF:
         this._userTitle = `movie buff`;
         break;
       default:

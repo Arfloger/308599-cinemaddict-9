@@ -20,7 +20,7 @@ export default class SearchController {
 
   init(cards) {
     this._cards = cards;
-    this._searchCards = Object.assign([], this._cards);
+    this._searchCards = this._cards.slice();
     render(this._headerElement, this._search.getElement(), Position.BEFOREEND);
     render(this._container, this._searchResult.getElement(), Position.AFTERBEGIN);
     this._search.getElement().querySelector(`input`)

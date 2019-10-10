@@ -56,7 +56,7 @@ export default class BoardController {
   showCards(cards) {
     this._cards = cards;
 
-    this._sortCards = Object.assign([], this._cards);
+    this._sortCards = this._cards.slice();
 
     this.unrender();
     render(this._mainFilmsContainer.getElement(), this._showMore.getElement(), Position.BEFOREEND);
@@ -172,7 +172,7 @@ export default class BoardController {
   _renderTopRated() {
     this._topRated.getElement().classList.remove(`visually-hidden`);
     this._topRated.getElement().querySelector(`.films-list__container`).innerHTML = ``;
-    let sortRatedCards = Object.assign([], this._cards);
+    let sortRatedCards = this._cards.slice();
     render(this._films.getElement(), this._topRated.getElement(), Position.BEFOREEND);
 
     sortRatedCards.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
@@ -187,7 +187,7 @@ export default class BoardController {
   _renderMostCommented() {
     this._mostCommented.getElement().classList.remove(`visually-hidden`);
     this._mostCommented.getElement().querySelector(`.films-list__container`).innerHTML = ``;
-    let sortRatedCards = Object.assign([], this._cards);
+    let sortRatedCards = this._cards.slice();
     render(this._films.getElement(), this._mostCommented.getElement(), Position.BEFOREEND);
 
     sortRatedCards.sort((a, b) => b.comments.length - a.comments.length);
@@ -209,7 +209,7 @@ export default class BoardController {
 
   _setMostCommented() {
     if (this._mode === `default`) {
-      let sortRatedCards = Object.assign([], this._cards);
+      let sortRatedCards = this._cards.slice();
       sortRatedCards.filter((it) => it.comments.length > 0);
 
       if (sortRatedCards.length > 2) {
